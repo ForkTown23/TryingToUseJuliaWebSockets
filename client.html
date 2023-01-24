@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <title>Websockets are awesome</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        input {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <form action="//localhost:8081" method="POST" enctype="multipart/form-data">
+        <label for="my-institutional-remove">Select the course to remove</label>
+        <input type="hidden" id="institutional-remove" name="Remove" value="remove">
+        <input type="text" id="my-institutional-remove" name="Course-Name">
+        <input type="submit" value="Send my edit">
+    </form>
+<!--
+    <form action="//localhost:8081" method="POST" enctype="multipart/form-data">
+        <label for="myfile">Select a file:</label>
+        <input type="file" id="myfile" name="myfile" accept=".csv"><br><br>
+        <span id='result'></span><br>
+        <input type='submit' value = 'Send myfile'>
+    </form>
+    <form onsubmit='event.preventDefault(); sendcommand();'>
+        <label>Enter a Julia command:</label><br>
+        <input
+            type='text'
+            placeholder='eg. 1+1 or echo("hellooooo..")'
+            id='command'
+        />
+        <label for="myfile">Select a file:</label>
+        <input type="file" id="myfile" name="myfile" accept=".csv"><br><br>
+        <span id='result'></span><br>
+        <input type='submit' value = 'Send command'>
+    </form>
+    <script>
+        input = document.getElementById('command');
+        file = document.getElementById('myfile').files[0];
+        result = document.getElementById('result');
+        const ws = new WebSocket('ws://localhost:8080')
+        ws.addEventListener('message', message => {
+            result.innerHTML = ` = ${message.data}`
+        })
+        function sendcommand(){
+            ws.send(input.value)
+        }
+    </script>
+-->
+</body>
+</html>

@@ -1,0 +1,22 @@
+<div class="wrap">
+  <h1>Collapsible drawers</h1>
+  <div class="collapse">
+    <h2>I Expand</h2>
+    We live in a society exquisitely dependent on science and technology, in which hardly anyone knows anything about science and technology.
+    <b>Carl Sagan</b>
+    <p>This box expands and casts a shadow</p>
+  </div>
+  <div class="collapse slide">
+    <h2>I Slide</h2>
+    Imagination will often carry us to worlds that never were. But without it we go nowhere.
+    <b>Carl Sagan</b>
+    <p>This one just slides down</p>
+  </div>
+  <div class="collapse transparent">
+    <h2>I am transparent</h2>
+    The brain is like a muscle. When it is in use we feel very good. Understanding is joyous.
+    <b>Carl Sagan</b> 
+    <p>This one keeps the transparency</p>
+  </div>
+</div> 
+<div style="font-size: 12px;  text-align: center;  color: #aaa;  opacity: 0.5;padding:50px 0;">Follow me on <a href="https://twitter.com/nodws" target="_b" style="color: #ccc">Twitter</a> new <a href="http://codepen.com/nodws" target="_b" style="color: #ccc">Pen</a> each week</div>
