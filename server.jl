@@ -15,15 +15,15 @@ server = HTTP.serve() do request::HTTP.Request
     @show request.method
     @show HTTP.header(request, "Content-Type")
     println("A\nA\nA\n")
-    bod = HTTP.parse_multipart_form(request)
+    #= That's for multipart forms, i.e. sending fat files. What if we remove that for the ones that are just commands
+    bod = HTTP.parse_multipart_form(request)=#
     # using bod[1].name is seemingly a no-go. until you figure it out, use hard-coded order: [1] is the method and [2] is the content 
-    println(String(read(bod[1].data)))
+    # println(String(read(bod[1].data)))
     #= this is for recieving a curriculum csv and reading it
     bod = String(request.body)
     println(bod) =#
     #=csv = split(bod, "\n")[5:end-3]
     println(csv) =#
-    @show request.body
     #= # write the contents to a file
     open("newfile.csv", "w") do file
         for row in csv
@@ -32,6 +32,10 @@ server = HTTP.serve() do request::HTTP.Request
         end
     end
     curr = read_csv("./newfile.csv")=#
+    # this is for not multipart encode crap
+    bod = String(request.body)
+    println("BODY")
+    println(bod)
     try
         return HTTP.Response("$(blocking_factor(curr.curriculum, 4))")
     catch e
