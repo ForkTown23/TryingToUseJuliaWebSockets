@@ -128,15 +128,18 @@
         <input type="hidden" id="institutional-remove-course" name="Method" value="remove-course">
         <input type="text" id="my-institutional-remove-course" name="Course-Name">
         <input type="submit" value="Send">
-    </form>
-      <b>Carl Sagan</b> 
-      <p>This one keeps the transparency</p>
+      </form>
     </div>
     <div class="collapse">
       <h2>Remove a prerequisite</h2>
-      TODO
-      <b>Carl Sagan</b> 
-      <p>This one keeps the transparency</p>
+      <form action="//localhost:8081" method="POST">
+        <label for="my-institutional-remove-prereq-target">Select the course to remove</label>
+        <input type="hidden" id="institutitonal-remove-prereq" name="Method" value="remove-prereq">
+        <input type="text" id="my-institutional-remove-prereq-target" name="Target-Name">
+        <br>
+        <label for="my-institutional-remove-prereq-prereq">Select which prereq to remove</label>
+        <input type="text" id="my-institutional-remove-prereq-prereq" name="Prereq-Name">
+        <input type="submit" value="Send">
     </div>
   </div> 
 
