@@ -152,8 +152,11 @@
   </div> 
 
   <script>
+    // Script the makes sure only one option is open at a time.
+    // mostly for flavor :)
     $('.collapse').on('click',function(e){
       e.preventDefault();
+      $('.collapse').not(this).removeClass('active')
       $(this).toggleClass('active');
     });
   </script>
