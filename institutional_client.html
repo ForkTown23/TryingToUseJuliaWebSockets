@@ -126,7 +126,9 @@
     <h1>Institutional What If</h1>
     <p class="helper-text">Here we explore the impacts of what if questions on an institution. That is, how many majors/plans do changes in the prerequisite structure affect?</p>
     <div class="collapse">
-      <h2>Add a Course</h2>
+      <div class="collapse-header">
+        <h2>Add a Course</h2>
+      </div>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-name">Type in the new course name: </label>
@@ -165,7 +167,9 @@
       </form>
     </div>
     <div class="collapse">
-      <h2>Add a Prerequisite</h2>
+      <div class="collapse-header">
+       <h2>Add a Prerequisite</h2>
+      </div>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
           <label for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite: </label>
@@ -180,7 +184,9 @@
       </form>
     </div>
     <div class="collapse">
-      <h2>Remove a course</h2>
+      <div class="collapse-header">
+        <h2>Remove a course</h2>
+      </div>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
         <label for="my-institutional-remove-course">Type the course to remove: </label>
@@ -191,7 +197,9 @@
       </form>
     </div>
     <div class="collapse">
-      <h2>Remove a prerequisite</h2>
+      <div class="collapse-header">
+        <h2>Remove a prerequisite</h2>
+      </div>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
         <label for="my-institutional-remove-prereq-target">Select the course to remove: </label>
@@ -209,11 +217,15 @@
   <script>
     // Script the makes sure only one option is open at a time.
     // mostly for flavor :)
-    $('.collapse').on('click',function(e){
+    $('.collapse-header').on('click',function(e){
       e.preventDefault();
-      $('.collapse').not(this).removeClass('active')
-      $(this).toggleClass('active');
+      $('.collapse').not($(this).parent()).removeClass('active')
+      $(this).parent().toggleClass('active');
     });
+    /*
+    $('h2').on('click', function(e){
+      e.preventDefault()
+    });*/
   </script>
 </body>
 </html>
