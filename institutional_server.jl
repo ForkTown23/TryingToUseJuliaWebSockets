@@ -11,8 +11,18 @@ function sanitize_add_course(param_string::Vector{SubString{String}})
 end
 
 function sanitize_add_prereq(param_string::Vector{SubString{String}})
-    clean_params = param_string
-
+    #clean_params = param_string
+    # there are supposed to be two entries here.
+    if length(param_string) != 2
+        throw(ArgumentError("There's too many courses here, we just need two"))
+    end
+    # they are in the format: "Target-Name=COURSE+CODE&Prereq-Name=COURSE+CODE"
+    clean_params = Vector{String}()
+    for pair in param_string
+        course_w_code = split(pair, "=")[2]
+        course_w_code = replace(course_w_code, "+" => " ")
+        push!(clean_params, course_w_code)
+    end
     return clean_params
 end
 
@@ -50,7 +60,7 @@ server = HTTP.serve() do request::HTTP.Request
             response = "Alright! Let's add a prereq!"
             # sanitize for add-prereq
             clean_params = sanitize_add_prereq(request_strings[2:end])
-            println(typeof(clean_params))
+
         elseif (method == "remove-course")
             response = "Alright! Let's remove a course!"
             clean_params = sanitize_remove_course(request_strings[2:end])
