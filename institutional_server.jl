@@ -7,6 +7,28 @@ using JSON
 
 big_curric = read_csv("./files/condensed.csv")
 
+function print_affected_plans_web(affected_plans)
+    prev_major = "PL99"
+    count = 0
+    ret = ""
+    for major in affected_plans
+        if major != ""
+            if major[1:4] != prev_major[1:4]
+                prev_major = major
+                ret = ret * "\n$(major[1:4]): $(major[5:end]), "
+                #print("\n$(major[1:4]): $(major[5:end]), ")
+                count += 1
+            elseif major != prev_major # don't ask me why for some reason each plan code shows up multiple times
+                prev_major = major
+                ret = ret * "$(major[5:end]), "
+                count += 1
+            end
+        end
+    end
+    ret = ret * "\n"
+    return (ret, count)
+end
+
 function sanitize_add_course(param_string::Vector{SubString{String}})
     clean_params = param_string
     # TODO
@@ -70,6 +92,8 @@ server = HTTP.serve() do request::HTTP.Request
             clean_params = sanitize_add_prereq(request_strings[2:end])
             # then call it TODO
             affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
+            (affected, count) = print_affected_plans_web(affected)
+            affected = affected * "Number of plans affected $count"
         elseif (method == "remove-course")
             response = "Alright! Let's remove a course!"
             # sanitize for remove prereq
