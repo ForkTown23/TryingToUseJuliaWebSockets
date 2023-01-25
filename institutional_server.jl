@@ -5,8 +5,11 @@ using CurricularAnalytics
 using CurricularAnalyticsDiff
 using JSON
 
+big_curric = read_csv("./files/condensed.csv")
+
 function sanitize_add_course(param_string::Vector{SubString{String}})
     clean_params = param_string
+    # TODO
     return clean_params
 end
 
@@ -28,11 +31,13 @@ end
 
 function sanitize_remove_course(param_string::Vector{SubString{String}})
     clean_params = param_string
+    # TODO
     return clean_params
 end
 
 function sanitize_remove_prereq(param_string::Vector{SubString{String}})
     clean_params = param_string
+    # TODO
     return clean_params
 end
 
@@ -50,23 +55,33 @@ server = HTTP.serve() do request::HTTP.Request
     try
         response = ""
         clean_params = ""
+        affected = ""
         method = split(request_strings[1], "=")[2]
         # this is going to be chained if-elses, julia has no native switch, and I don't want to add another package
         if (method == "add-course")
-            # do the add course stuff
             response = "Alright! Let's add a course!"
+            # sanitize for add course
             clean_params = sanitize_add_course(request_strings[2:end])
+            # then call it TODO
+            affected = ""
         elseif (method == "add-prereq")
             response = "Alright! Let's add a prereq!"
             # sanitize for add-prereq
             clean_params = sanitize_add_prereq(request_strings[2:end])
-
+            # then call it TODO
+            affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
         elseif (method == "remove-course")
             response = "Alright! Let's remove a course!"
+            # sanitize for remove prereq
             clean_params = sanitize_remove_course(request_strings[2:end])
+            # then call it TODO
+            affected = ""
         elseif (method == "remove-prereq")
             response = "Alright! Let's remove a prereq!"
+            #sanitize for remove prereq
             clean_params = sanitize_remove_prereq(request_strings[2:end])
+            # then call it TODO
+            affected = ""
         else
             throw(ArgumentError("Hey, I'm not sure what method you're trying to call. Please try again :)"))
         end
