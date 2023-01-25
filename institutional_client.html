@@ -120,13 +120,21 @@
     </div>
     <div class="collapse">
       <h2>Add a Prerequisite</h2>
+      <form action="//localhost:8081" method="POST">
+        <label for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite:</label>
+        <input type="hidden" id="institutional-add-prereq" name="Method" value="add-prereq">
+        <input type="text" id="my-institutional-add-prereq-target" name="Target-Name">
+        <label for="my-institutional-add-prereq-prereq">Type in a course to get a new prerequisite:</label>
+        <input type="text" id="my-institutional-add-prereq-prereq" name="Prereq-Name">
+        <input type="submit" value="Send">
+      </form>
     </div>
     <div class="collapse">
       <h2>Remove a course</h2>
       <form action="//localhost:8081" method="POST">
-        <label for="my-institutional-remove-course">Select the course to remove</label>
+        <label for="my-institutional-remove-course">Type the course to remove</label>
         <input type="hidden" id="institutional-remove-course" name="Method" value="remove-course">
-        <input type="text" id="my-institutional-remove-course" name="Course-Name">
+        <input type="text" id="my-institutional-remove-course" name="Target-Name">
         <input type="submit" value="Send">
       </form>
     </div>
