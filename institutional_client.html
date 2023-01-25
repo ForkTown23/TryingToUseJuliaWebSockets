@@ -108,6 +108,16 @@
     form{
       display:table;
     }
+    .form-row{
+      display:table-row;
+    }
+    label{
+      display:table-cell;
+    }
+    .input-text{
+      margin:1em;
+      display:table-cell;
+    }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 </head>
@@ -118,67 +128,80 @@
     <div class="collapse">
       <h2>Add a Course</h2>
       <form action="//localhost:8081" method="POST">
-        <label for="my-institutional-add-course-new-course-name">Type in the new course name</label>
-        <input type="hidden" id="institutional-add-course" name="Method" value="add-course">
-        <input type="text" id="my-institutional-add-course-new-course-name" name="Target-Name">
-        <br>
-        <label for="my-institutional-add-course-new-course-hours">Type in the new course credit hours</label>
-        <input type="text" id="my-institutional-add-course-new-course-hours" name="Target-Hours">
-        <br>
-        <label for="my-institutional-add-course-new-course-prereq1">Type in the new course prereq #1</label>
-        <input type="text" id="my-institutional-add-course-new-course-prereq1" name="Target-Prereq1">
-        <br>
-        <label for="my-institutional-add-course-new-course-prereq2">Type in the new course prereq #2</label>
-        <input type="text" id="my-institutional-add-course-new-course-prereq2" name="Target-Prereq2">
-        <br>
-        <label for="my-institutional-add-course-new-course-prereq3">Type in the new course prereq #3</label>
-        <input type="text" id="my-institutional-add-course-new-course-prereq3" name="Target-Prereq3">
-        <br>
-        <label for="my-institutional-add-course-new-course-dep1">Type in the new course dependency #1</label>
-        <input type="text" id="my-institutional-add-course-new-course-dep1" name="Target-Dep1">
-        <br>
-        <label for="my-institutional-add-course-new-course-dep2">Type in the new course dependency #2</label>
-        <input type="text" id="my-institutional-add-course-new-course-dep2" name="Target-Dep2">
-        <br>
-        <label for="my-institutional-add-course-new-course-dep3">Type in the new course dependency #3</label>
-        <input type="text" id="my-institutional-add-course-new-course-dep3" name="Target-Dep3">
-        <br>
-        <input type="submit" value="Send"
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-name">Type in the new course name: </label>
+          <input type="hidden" id="institutional-add-course" name="Method" value="add-course">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-name" name="Target-Name">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-hours">Type in the new course credit hours: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-hours" name="Target-Hours">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-prereq1">Type in the new course prereq #1: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq1" name="Target-Prereq1">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-prereq2">Type in the new course prereq #2: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq2" name="Target-Prereq2">
+        </p>
+        <p class="form-row">
+        <label for="my-institutional-add-course-new-course-prereq3">Type in the new course prereq #3: </label>
+        <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq3" name="Target-Prereq3">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-dep1">Type in the new course dependency #1: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep1" name="Target-Dep1">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-dep2">Type in the new course dependency #2: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep2" name="Target-Dep2">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-dep3">Type in the new course dependency #3: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep3" name="Target-Dep3">
+        </p>
+        <input type="submit" value="Send">
       </form>
     </div>
     <div class="collapse">
       <h2>Add a Prerequisite</h2>
       <form action="//localhost:8081" method="POST">
-        <label for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite:</label>
-        <input type="hidden" id="institutional-add-prereq" name="Method" value="add-prereq">
-        <input type="text" id="my-institutional-add-prereq-target" name="Target-Name">
-        <br>
-        <label for="my-institutional-add-prereq-prereq">Type in a course to get a new prerequisite:</label>
-        <input type="text" id="my-institutional-add-prereq-prereq" name="Prereq-Name">
-        <br>
+        <p class="form-row">
+          <label for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite: </label>
+          <input type="hidden" id="institutional-add-prereq" name="Method" value="add-prereq">
+          <input class="input-text" type="text" id="my-institutional-add-prereq-target" name="Target-Name">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-prereq-prereq">Type in a course to get a new prerequisite: </label>
+          <input class="input-text" type="text" id="my-institutional-add-prereq-prereq" name="Prereq-Name">
+        </p>
         <input type="submit" value="Send">
       </form>
     </div>
     <div class="collapse">
       <h2>Remove a course</h2>
       <form action="//localhost:8081" method="POST">
-        <label for="my-institutional-remove-course">Type the course to remove</label>
+        <p class="form-row">
+        <label for="my-institutional-remove-course">Type the course to remove: </label>
         <input type="hidden" id="institutional-remove-course" name="Method" value="remove-course">
-        <input type="text" id="my-institutional-remove-course" name="Target-Name">
-        <br>
+        <input class="input-text" type="text" id="my-institutional-remove-course" name="Target-Name">
+        </p>
         <input type="submit" value="Send">
       </form>
     </div>
     <div class="collapse">
       <h2>Remove a prerequisite</h2>
       <form action="//localhost:8081" method="POST">
-        <label for="my-institutional-remove-prereq-target">Select the course to remove</label>
+        <p class="form-row">
+        <label for="my-institutional-remove-prereq-target">Select the course to remove: </label>
         <input type="hidden" id="institutitonal-remove-prereq" name="Method" value="remove-prereq">
-        <input type="text" id="my-institutional-remove-prereq-target" name="Target-Name">
-        <br>
-        <label for="my-institutional-remove-prereq-prereq">Select which prereq to remove</label>
-        <input type="text" id="my-institutional-remove-prereq-prereq" name="Prereq-Name">
-        <br>
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-target" name="Target-Name">
+        </p>
+        <p class="form-row">
+        <label for="my-institutional-remove-prereq-prereq">Select which prereq to remove: </label>
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-prereq" name="Prereq-Name">
+        </p>
         <input type="submit" value="Send">
     </div>
   </div> 
