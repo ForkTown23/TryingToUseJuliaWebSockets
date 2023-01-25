@@ -105,6 +105,9 @@
     .helper-text{
       color: #fff
     }
+    form{
+      display:table;
+    }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 </head>
@@ -114,9 +117,34 @@
     <p class="helper-text">Here we explore the impacts of what if questions on an institution. That is, how many majors/plans do changes in the prerequisite structure affect?</p>
     <div class="collapse">
       <h2>Add a Course</h2>
-      TODO
-      <b>Carl Sagan</b>
-      <p>This box expands and casts a shadow</p>
+      <form action="//localhost:8081" method="POST">
+        <label for="my-institutional-add-course-new-course-name">Type in the new course name</label>
+        <input type="hidden" id="institutional-add-course" name="Method" value="add-course">
+        <input type="text" id="my-institutional-add-course-new-course-name" name="Target-Name">
+        <br>
+        <label for="my-institutional-add-course-new-course-hours">Type in the new course credit hours</label>
+        <input type="text" id="my-institutional-add-course-new-course-hours" name="Target-Hours">
+        <br>
+        <label for="my-institutional-add-course-new-course-prereq1">Type in the new course prereq #1</label>
+        <input type="text" id="my-institutional-add-course-new-course-prereq1" name="Target-Prereq1">
+        <br>
+        <label for="my-institutional-add-course-new-course-prereq2">Type in the new course prereq #2</label>
+        <input type="text" id="my-institutional-add-course-new-course-prereq2" name="Target-Prereq2">
+        <br>
+        <label for="my-institutional-add-course-new-course-prereq3">Type in the new course prereq #3</label>
+        <input type="text" id="my-institutional-add-course-new-course-prereq3" name="Target-Prereq3">
+        <br>
+        <label for="my-institutional-add-course-new-course-dep1">Type in the new course dependency #1</label>
+        <input type="text" id="my-institutional-add-course-new-course-dep1" name="Target-Dep1">
+        <br>
+        <label for="my-institutional-add-course-new-course-dep2">Type in the new course dependency #2</label>
+        <input type="text" id="my-institutional-add-course-new-course-dep2" name="Target-Dep2">
+        <br>
+        <label for="my-institutional-add-course-new-course-dep3">Type in the new course dependency #3</label>
+        <input type="text" id="my-institutional-add-course-new-course-dep3" name="Target-Dep3">
+        <br>
+        <input type="submit" value="Send"
+      </form>
     </div>
     <div class="collapse">
       <h2>Add a Prerequisite</h2>
