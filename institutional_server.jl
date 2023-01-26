@@ -135,7 +135,7 @@ server = HTTP.serve() do request::HTTP.Request
             # then call it TODO
             affected = add_course_institutional(clean_params[1], big_curric, clean_params[2], clean_params[3], clean_params[4])
             (affected, count) = print_affected_plans_web(affected)
-            affected = affected * "Number of plans affected $count"
+            affected = affected * "Number of plans affected $count" #oop
         elseif (method == "add-prereq")
             response = "Alright! Let's add a prereq!"
             # sanitize for add-prereq
