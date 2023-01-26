@@ -30,9 +30,39 @@ function print_affected_plans_web(affected_plans)
 end
 
 function sanitize_add_course(param_string::Vector{SubString{String}})
-    clean_params = param_string
-    # TODO
-    return clean_params
+    # there are supposed to be 8 entries here
+    if length(param_string) != 8
+        throw(ArgumentError("There's a weird number of courses here, we need eight."))
+    end
+    # they are in the format: ["Target-Name=MATH+20B.5", "Target-Hours=5", "Target-Prereq1=MATH+20B", "Target-Prereq2=MATH+20A", "Target-Prereq3=MATH+4C", "Target-Dep1=MATH+108", "Target-Dep2=MATH+109", "Target-Dep3=MATH+20E"] 
+    clean_params = Vector{String}()
+    for pair in param_string
+        course_w_code = split(pair, "=")[2]
+        course_w_code = replace(course_w_code, "+" => " ")
+        push!(clean_params, course_w_code)
+    end
+    # there's a few extra things to do here
+    # 1) turn things into the dict format
+    # 2) remove the empty ones
+    # instead i'm just adding the non-empty ones
+    prereqs = Dict()
+    for prereq in clean_params[3:5]
+        if prereq != ""
+            prereqs[prereq] = pre
+        end
+    end
+    deps = Dict()
+    for dep in clean_params[6:8]
+        if dep != ""
+            deps[dep] = pre
+        end
+    end
+    cleaner_params = []
+    push!(cleaner_params, clean_params[1])
+    push!(cleaner_params, parse(Float64, clean_params[2]))
+    push!(cleaner_params, prereqs)
+    push!(cleaner_params, deps)
+    return cleaner_params
 end
 
 function sanitize_add_prereq(param_string::Vector{SubString{String}})
@@ -103,7 +133,9 @@ server = HTTP.serve() do request::HTTP.Request
             # sanitize for add course
             clean_params = sanitize_add_course(request_strings[2:end])
             # then call it TODO
-            affected = ""
+            affected = add_course_institutional(clean_params[1], big_curric, clean_params[2], clean_params[3], clean_params[4])
+            (affected, count) = print_affected_plans_web(affected)
+            affected = affected * "Number of plans affected $count"
         elseif (method == "add-prereq")
             response = "Alright! Let's add a prereq!"
             # sanitize for add-prereq
