@@ -164,7 +164,7 @@ server = HTTP.serve() do request::HTTP.Request
         else
             throw(ArgumentError("Hey, I'm not sure what method you're trying to call. Please try again :)"))
         end
-        return HTTP.Response("$response, \n $clean_params \n $affected")
+        return HTTP.Response("<html><body><h2 style='color:red'>BAMBOOZLED</h2></body></html>") #="$response, \n $clean_params \n $affected"=#
     catch e
         println(e)
         return HTTP.Response(400, "Error: $e")
