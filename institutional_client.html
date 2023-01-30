@@ -2,123 +2,8 @@
 <html lang='en'>
 <head>
   <meta charset='utf-8'>
-  <title>Websockets are awesome</title>
-  <style>
-      body {
-          font-family: sans-serif;
-          height: 100vh;
-          padding: 0;
-          margin: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-      }
-      input {
-          margin: 4px 0;
-      }
-    @import url(https://fonts.googleapis.com/css?family=Roboto);
-    html{ height:100%}
-    body{
-      font-family: 'Roboto', sans-serif;
-      font-size:15px;
-      -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none; 
-      align-items: stretch;
-    }
-    h1{
-      color:rgb(18, 169, 154);
-      text-align:center
-    }
-    .wrap{
-      width:100%;
-      margin:0 auto;
-      background-color:black;
-    }
-    .collapse {
-      background-color: rgba(255,255,255,0);
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-      color: #fff;
-      padding: 10px;
-      margin:0px;
-      max-height:40px;
-      overflow:hidden;
-      transition: all 0.4s;
-    }
-    .collapse * {
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-      
-    }
-    .collapse.active {
-      background-color: rgba(255,255,255,0.9);
-      box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
-      z-index: 200;
-      color:#444;
-      max-height:3000px;
-      padding:10px 20px;
-      margin: 10px -10px;
-      transition: all 0.2s,max-height 4.8s;
-    }
-    .collapse h2 {
-      font-size: 18px;
-      line-height: 20px;
-      position:relative
-    }
-    .slide{
-      box-shadow:none !important;
-      margin:0px !important;
-      padding:10px !important
-    }
-    .transparent{
-      background-color: rgba(255,255,255,0) !important;
-      color:#fff !important;
-      box-shadow:none !important;
-      margin:0px !important;
-      padding:10px !important
-    }
-    .collapse h2::after{
-      content: "+";
-      text-align:center;
-      position:absolute;
-      width:15px;
-      height:15px;
-      border:1px solid #ccc;
-      border-radius:50%;
-      font-size:12px;
-      line-height:15px;
-      opacity:0.5;
-      right:0;
-      top:0;
-    }
-    .collapse:hover h2::after{
-      opacity:1
-    }
-
-    .collapse.active h2::after{
-      content: "-";
-    }
-    .helper-text{
-      color: #fff
-    }
-    form{
-      display:table;
-    }
-    .form-row{
-      display:table-row;
-    }
-    label{
-      display:table-cell;
-    }
-    .input-text{
-      margin:1em;
-      display:table-cell;
-    }
-  </style>
+  <title>Institutional WhatIf</title>
+  <link rel="stylesheet" href="/styles/style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 </head>
 <body>
@@ -129,15 +14,18 @@
       <div class="collapse-header">
         <h2>Add a Course</h2>
       </div>
+      <p>To add a course, please specify the new name and the credit hours. </p>
+      <p>Strictly speaking adding prereqs and dependencies is not required, but courses that have no dependencies will not affect any plans other than the ones that they are manually added to.</p>
+      <p>For dependency and prerequisite course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-name">Type in the new course name: </label>
           <input type="hidden" id="institutional-add-course" name="Method" value="add-course">
-          <input class="input-text" type="text" id="my-institutional-add-course-new-course-name" name="Target-Name">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-name" required="required" name="Target-Name">
         </p>
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-hours">Type in the new course credit hours: </label>
-          <input class="input-text" type="text" id="my-institutional-add-course-new-course-hours" name="Target-Hours">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-hours" required="required" name="Target-Hours">
         </p>
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-prereq1">Type in the new course prereq #1: </label>
@@ -145,11 +33,11 @@
         </p>
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-prereq2">Type in the new course prereq #2: </label>
-          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq2" name="Target-Prereq2">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq2" placeholder="(Optional)" name="Target-Prereq2">
         </p>
         <p class="form-row">
         <label for="my-institutional-add-course-new-course-prereq3">Type in the new course prereq #3: </label>
-        <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq3" name="Target-Prereq3">
+        <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq3" placeholder="(Optional)" name="Target-Prereq3">
         </p>
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-dep1">Type in the new course dependency #1: </label>
@@ -157,11 +45,11 @@
         </p>
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-dep2">Type in the new course dependency #2: </label>
-          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep2" name="Target-Dep2">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep2" placeholder="(Optional)" name="Target-Dep2">
         </p>
         <p class="form-row">
           <label for="my-institutional-add-course-new-course-dep3">Type in the new course dependency #3: </label>
-          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep3" name="Target-Dep3">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep3" placeholder="(Optional)" name="Target-Dep3">
         </p>
         <input type="submit" value="Send">
       </form>
@@ -170,15 +58,17 @@
       <div class="collapse-header">
        <h2>Add a Prerequisite</h2>
       </div>
+      <p>Here you can add a prerequisite. Please fill in the course you want to add a prerequisite to and the course you want to add as the prerequisite</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
           <label for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite: </label>
           <input type="hidden" id="institutional-add-prereq" name="Method" value="add-prereq">
-          <input class="input-text" type="text" id="my-institutional-add-prereq-target" name="Target-Name">
+          <input class="input-text" type="text" id="my-institutional-add-prereq-target" required="required" name="Target-Name">
         </p>
         <p class="form-row">
           <label for="my-institutional-add-prereq-prereq">Type in the name of the new prerequisite: </label>
-          <input class="input-text" type="text" id="my-institutional-add-prereq-prereq" name="Prereq-Name">
+          <input class="input-text" type="text" id="my-institutional-add-prereq-prereq" required="required" name="Prereq-Name">
         </p>
         <input type="submit" value="Send">
       </form>
@@ -187,11 +77,13 @@
       <div class="collapse-header">
         <h2>Remove a course</h2>
       </div>
+      <p>Here you can remove a course. Please simply specify the name of the course to remove</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
         <label for="my-institutional-remove-course">Type the course to remove: </label>
         <input type="hidden" id="institutional-remove-course" name="Method" value="remove-course">
-        <input class="input-text" type="text" id="my-institutional-remove-course" name="Target-Name">
+        <input class="input-text" type="text" id="my-institutional-remove-course" required="required" name="Target-Name">
         </p>
         <input type="submit" value="Send">
       </form>
@@ -200,15 +92,17 @@
       <div class="collapse-header">
         <h2>Remove a prerequisite</h2>
       </div>
+      <p>Here you can remove a prerequisite. Please specify the course that will lose a prerequisite and the prerequisite it will lose.</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
       <form action="//localhost:8081" method="POST">
         <p class="form-row">
         <label for="my-institutional-remove-prereq-target">Select the course to remove: </label>
         <input type="hidden" id="institutitonal-remove-prereq" name="Method" value="remove-prereq">
-        <input class="input-text" type="text" id="my-institutional-remove-prereq-target" name="Target-Name">
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-target" required="required" name="Target-Name">
         </p>
         <p class="form-row">
         <label for="my-institutional-remove-prereq-prereq">Select which prereq to remove: </label>
-        <input class="input-text" type="text" id="my-institutional-remove-prereq-prereq" name="Prereq-Name">
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-prereq" required="required" name="Prereq-Name">
         </p>
         <input type="submit" value="Send">
     </div>
