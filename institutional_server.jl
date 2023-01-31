@@ -7,6 +7,150 @@ using JSON
 
 big_curric = read_csv("./files/condensed.csv")
 
+institutional_response_first_half = "<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <title>Institutional What If Response</title>
+        <style>
+        body {
+    font-family: sans-serif;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+input {
+    margin: 4px 0;
+}
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+html{ height:100%}
+body{
+font-family: 'Roboto', sans-serif;
+font-size:15px;
+-webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; 
+align-items: stretch;
+}
+h1{
+color:rgb(18, 169, 154);
+text-align:center
+}
+.wrap{
+width:100%;
+margin:0 auto;
+background-color:black;
+}
+.collapse {
+background-color: rgba(255,255,255,0);
+border-bottom: 1px solid #eee;
+cursor: pointer;
+color: #fff;
+padding: 10px;
+margin:0px;
+max-height:40px;
+overflow:hidden;
+transition: all 0.4s;
+}
+.collapse * {
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+
+}
+.collapse.active {
+background-color: rgba(255,255,255,0.9);
+box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+z-index: 200;
+color:#444;
+max-height:3000px;
+padding:10px 20px;
+margin: 10px -10px;
+transition: all 0.2s,max-height 4.8s;
+}
+.collapse h2 {
+font-size: 18px;
+line-height: 20px;
+position:relative
+}
+.slide{
+box-shadow:none !important;
+margin:0px !important;
+padding:10px !important
+}
+.transparent{
+background-color: rgba(255,255,255,0) !important;
+color:#fff !important;
+box-shadow:none !important;
+margin:0px !important;
+padding:10px !important
+}
+.collapse h2::after{
+content: ' + ';
+  text-align:center;
+  position:absolute;
+  width:15px;
+  height:15px;
+  border:1px solid #ccc;
+  border-radius:50%;
+  font-size:12px;
+  line-height:15px;
+  opacity:0.5;
+  right:0;
+  top:0;
+  }
+  .collapse:hover h2::after{
+  opacity:1
+  }
+  
+  .collapse.active h2::after{
+  content: ' - ';
+    }
+    .helper-text{
+    color: #fff
+    }
+    form{
+    display:table;
+    }
+    .form-row{
+    display:table-row;
+    }
+    label{
+    display:table-cell;
+    }
+    .input-text{
+    margin:1em;
+    display:table-cell;
+    }
+    </style>
+            <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js'></script>
+        </head>
+        <body>
+            <div class='wrap'>
+                <h1>Query Results!</h1>"
+
+institutional_response_second_half = "</div>
+<script>
+// Script the makes sure only one option is open at a time.
+// mostly for flavor :)
+\$('.collapse-header').on('click',function(e){
+  e.preventDefault();
+  \$('.collapse').not(\$(this).parent()).removeClass('active')
+  \$(this).parent().toggleClass('active');
+});
+/*
+\$('h2').on('click', function(e){
+  e.preventDefault()
+});*/
+</script> 
+</body>
+</html>"
+
 function print_affected_plans_web(affected_plans)
     prev_major = "PL99"
     count = 0
@@ -26,7 +170,24 @@ function print_affected_plans_web(affected_plans)
         end
     end
     ret = ret * "\n"
-    return (ret, count)
+    html_block = ""
+    collapse_tag = "<div class='collapse'>"
+    collapse_header_tag = "<div class='collapse-header'>"
+    div_close_tag = "</div>"
+    header = "<p class='helper-text'>This edit affects $count plans:</p>"
+    html_block = html_block * header
+    block = split(ret, "\n")
+    # Skip the first and last because they are just new lines and they trip the rest of this up
+    for affected_row in block[2:end-1]
+        split_results = split(affected_row, ":")
+        block_header = split_results[1]
+        block_content = split_results[2]
+        major_code_header = "<h2>$block_header</h2>"
+        results_p = "<p>$block_content</p>"
+        div_block = collapse_tag * collapse_header_tag * major_code_header * div_close_tag * results_p * div_close_tag
+        html_block = html_block * div_block
+    end
+    return (ret, count, html_block)
 end
 
 function sanitize_add_course(param_string::Vector{SubString{String}})
@@ -111,6 +272,8 @@ function sanitize_remove_prereq(param_string::Vector{SubString{String}})
     return clean_params
 end
 
+
+
 # HTTP.listen! and HTTP.serve! are the non-blocking versions of HTTP.listen/HTTP.serve
 server = HTTP.serve() do request::HTTP.Request
     @show request
@@ -121,11 +284,13 @@ server = HTTP.serve() do request::HTTP.Request
     # println(String(read(bod[1].data)))
     #@show request.body
     request_string = String(request.body)
+    println(request_string)
     request_strings = split(request_string, "&")
     try
         response = ""
         clean_params = ""
         affected = ""
+        html_resp = ""
         method = split(request_strings[1], "=")[2]
         # this is going to be chained if-elses, julia has no native switch, and I don't want to add another package
         if (method == "add-course")
@@ -134,7 +299,7 @@ server = HTTP.serve() do request::HTTP.Request
             clean_params = sanitize_add_course(request_strings[2:end])
             # then call it TODO
             affected = add_course_institutional(clean_params[1], big_curric, clean_params[2], clean_params[3], clean_params[4])
-            (affected, count) = print_affected_plans_web(affected)
+            (affected, count, html_resp) = print_affected_plans_web(affected)
             affected = affected * "Number of plans affected $count" #oop
         elseif (method == "add-prereq")
             response = "Alright! Let's add a prereq!"
@@ -142,7 +307,7 @@ server = HTTP.serve() do request::HTTP.Request
             clean_params = sanitize_add_prereq(request_strings[2:end])
             # then call it TODO
             affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
-            (affected, count) = print_affected_plans_web(affected)
+            (affected, count, html_resp) = print_affected_plans_web(affected)
             affected = affected * "Number of plans affected $count"
         elseif (method == "remove-course")
             response = "Alright! Let's remove a course!"
@@ -151,7 +316,7 @@ server = HTTP.serve() do request::HTTP.Request
             # then call it
             affected = delete_course_institutional(clean_params[1], big_curric)
             # collect the plans and print properly
-            (affected, count) = print_affected_plans_web(affected)
+            (affected, count, html_resp) = print_affected_plans_web(affected)
             affected = affected * "Number of plans affected $count"
         elseif (method == "remove-prereq")
             response = "Alright! Let's remove a prereq!"
@@ -159,14 +324,18 @@ server = HTTP.serve() do request::HTTP.Request
             clean_params = sanitize_remove_prereq(request_strings[2:end])
             # then call it
             affected = delete_prerequisite_institutional(clean_params[1], clean_params[2], big_curric)
-            (affected, count) = print_affected_plans_web(affected)
-            affected = affected * "Number of plans affected $count"
+            (affected, count, html_resp) = print_affected_plans_web(affected)
+            affected = res[1] * "Number of plans affected $(res[2])"
         else
             throw(ArgumentError("Hey, I'm not sure what method you're trying to call. Please try again :)"))
         end
-        return HTTP.Response("<html><body><h2 style='color:red'>BAMBOOZLED</h2></body></html>") #="$response, \n $clean_params \n $affected"=#
+        # if all is well so far, respond with html
+        resp = institutional_response_first_half * html_resp * institutional_response_second_half
+        println(resp)
+        return HTTP.Response("$resp") #="$response, \n $clean_params \n $affected"=#
     catch e
-        println(e)
+        showerror(stdout, e)
+        display(stacktrace(catch_backtrace()))
         return HTTP.Response(400, "Error: $e")
     end
 end
