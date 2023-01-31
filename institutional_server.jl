@@ -26,7 +26,7 @@ input {
     margin: 4px 0;
 }
 @import url(https://fonts.googleapis.com/css?family=Roboto);
-html{ height:100%}
+html{ background-color: black;}
 body{
 font-family: 'Roboto', sans-serif;
 font-size:15px;
@@ -36,6 +36,7 @@ font-size:15px;
   -ms-user-select: none;
   user-select: none; 
 align-items: stretch;
+overflow: visible;
 }
 h1{
 color:rgb(18, 169, 154);
@@ -43,6 +44,7 @@ text-align:center
 }
 .wrap{
 width:100%;
+height: 100%;
 margin:0 auto;
 background-color:black;
 }
@@ -127,6 +129,22 @@ content: ' + ';
     margin:1em;
     display:table-cell;
     }
+    table{
+        color: white
+        border: 1px solid white
+    }
+    .shows-up{
+        background-color: red
+    }
+    .no-show{
+        background-color: green
+    }
+    .major{
+        color: white;
+    }
+    th {
+        color: white
+    }
     </style>
             <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js'></script>
         </head>
@@ -171,21 +189,35 @@ function print_affected_plans_web(affected_plans)
     end
     ret = ret * "\n"
     html_block = ""
-    collapse_tag = "<div class='collapse'>"
-    collapse_header_tag = "<div class='collapse-header'>"
-    div_close_tag = "</div>"
     header = "<p class='helper-text'>This edit affects $count plans:</p>"
-    html_block = html_block * header
     block = split(ret, "\n")
-    # Skip the first and last because they are just new lines and they trip the rest of this up
+    html_block = html_block * header
+    table_tags = ["<table>", "</table>"]
+    table_row_tags = ["<tr>", "</tr>"]
+    table_header_tags = ["<th>", "</th>"]
+    cell_tags = Dict("major" => "<td class=major>", "shows up" => "<td class=shows-up>", "no show" => "<td class=no-show>", "end" => "</td>")
+    colleges = ["FI", "MU", "RE", "SI", "SN", "TH", "WA", "curriculum"]
+    # assemble the header first
+    html_block = html_block * table_tags[1] * table_row_tags[1] * table_header_tags[1] * "Major" * table_header_tags[2]
+    for college in colleges
+        html_block = html_block * table_header_tags[1] * college * table_header_tags[2]
+    end
+    html_block = html_block * table_row_tags[2]
+    # Skip the first and last of the affected string because they are just new lines and they trip the rest of this up
     for affected_row in block[2:end-1]
+        table_row = ""
         split_results = split(affected_row, ":")
-        block_header = split_results[1]
-        block_content = split_results[2]
-        major_code_header = "<h2>$block_header</h2>"
-        results_p = "<p>$block_content</p>"
-        div_block = collapse_tag * collapse_header_tag * major_code_header * div_close_tag * results_p * div_close_tag
-        html_block = html_block * div_block
+        major = strip(split_results[1]) # remove whitespace
+        plans = split(strip(split_results[2]), ",")
+        table_row = table_row * table_row_tags[1] * cell_tags["major"] * major * cell_tags["end"]
+        for college in colleges
+            if college in plans
+                table_row = table_row * cell_tags["shows up"] * cell_tags["end"]
+            else
+                table_row = table_row * cell_tags["no show"] * cell_tags["end"]
+            end
+        end
+        html_block = html_block * table_row
     end
     return (ret, count, html_block)
 end
