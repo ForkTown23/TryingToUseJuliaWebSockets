@@ -26,7 +26,7 @@ input {
     margin: 4px 0;
 }
 @import url(https://fonts.googleapis.com/css?family=Roboto);
-html{ height:100%}
+html{ background-color:black}
 body{
 font-family: 'Roboto', sans-serif;
 font-size:15px;
@@ -36,6 +36,7 @@ font-size:15px;
   -ms-user-select: none;
   user-select: none; 
 align-items: stretch;
+overflow:visible;
 }
 h1{
 color:rgb(18, 169, 154);
