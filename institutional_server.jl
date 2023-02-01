@@ -326,7 +326,7 @@ server = HTTP.serve() do request::HTTP.Request
             # then call it
             affected = delete_prerequisite_institutional(clean_params[1], clean_params[2], big_curric)
             (affected, count, html_resp) = print_affected_plans_web(affected)
-            affected = res[1] * "Number of plans affected $(res[2])"
+            affected = affected * "Number of plans affected $(count)"
         else
             throw(ArgumentError("Hey, I'm not sure what method you're trying to call. Please try again :)"))
         end
