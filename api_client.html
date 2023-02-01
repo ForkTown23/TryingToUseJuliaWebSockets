@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>Institutional WhatIf</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Institutional What If</h1>
+    <p class="helper-text">Here we explore the impacts of what if questions on an institution. That is, how many majors/plans do changes in the prerequisite structure affect?</p>
+    <div class="collapse">
+      <div class="collapse-header">
+        <h2>Add a Course</h2>
+      </div>
+      <p>To add a course, please specify the new name and the credit hours. </p>
+      <p>Strictly speaking adding prereqs and dependencies is not required, but courses that have no dependencies will not affect any plans other than the ones that they are manually added to.</p>
+      <p>For dependency and prerequisite course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/add/course" method="POST">
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-name">Type in the new course name: </label>
+          <input type="hidden" id="institutional-add-course" name="Method" value="add-course">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-name" required="required" name="Target-Name">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-hours">Type in the new course credit hours: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-hours" required="required" name="Target-Hours">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-prereq1">Type in the new course prereq #1: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq1" name="Target-Prereq1">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-prereq2">Type in the new course prereq #2: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq2" placeholder="(Optional)" name="Target-Prereq2">
+        </p>
+        <p class="form-row">
+        <label for="my-institutional-add-course-new-course-prereq3">Type in the new course prereq #3: </label>
+        <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq3" placeholder="(Optional)" name="Target-Prereq3">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-dep1">Type in the new course dependency #1: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep1" name="Target-Dep1">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-dep2">Type in the new course dependency #2: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep2" placeholder="(Optional)" name="Target-Dep2">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-course-new-course-dep3">Type in the new course dependency #3: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep3" placeholder="(Optional)" name="Target-Dep3">
+        </p>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div class="collapse">
+      <div class="collapse-header">
+       <h2>Add a Prerequisite</h2>
+      </div>
+      <p>Here you can add a prerequisite. Please fill in the course you want to add a prerequisite to and the course you want to add as the prerequisite</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/add/prereq" method="POST">
+        <p class="form-row">
+          <label for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite: </label>
+          <input type="hidden" id="institutional-add-prereq" name="Method" value="add-prereq">
+          <input class="input-text" type="text" id="my-institutional-add-prereq-target" required="required" name="Target-Name">
+        </p>
+        <p class="form-row">
+          <label for="my-institutional-add-prereq-prereq">Type in the name of the new prerequisite: </label>
+          <input class="input-text" type="text" id="my-institutional-add-prereq-prereq" required="required" name="Prereq-Name">
+        </p>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div class="collapse">
+      <div class="collapse-header">
+        <h2>Remove a course</h2>
+      </div>
+      <p>Here you can remove a course. Please simply specify the name of the course to remove</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/remove/course" method="POST">
+        <p class="form-row">
+        <label for="my-institutional-remove-course">Type the course to remove: </label>
+        <input type="hidden" id="institutional-remove-course" name="Method" value="remove-course">
+        <input class="input-text" type="text" id="my-institutional-remove-course" required="required" name="Target-Name">
+        </p>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div class="collapse">
+      <div class="collapse-header">
+        <h2>Remove a prerequisite</h2>
+      </div>
+      <p>Here you can remove a prerequisite. Please specify the course that will lose a prerequisite and the prerequisite it will lose.</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/remove/prereq" method="POST">
+        <p class="form-row">
+        <label for="my-institutional-remove-prereq-target">Select the course to remove: </label>
+        <input type="hidden" id="institutitonal-remove-prereq" name="Method" value="remove-prereq">
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-target" required="required" name="Target-Name">
+        </p>
+        <p class="form-row">
+        <label for="my-institutional-remove-prereq-prereq">Select which prereq to remove: </label>
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-prereq" required="required" name="Prereq-Name">
+        </p>
+        <input type="submit" value="Send">
+    </div>
+  </div> 
+
+  <script>
+    // Script the makes sure only one option is open at a time.
+    // mostly for flavor :)
+    $('.collapse-header').on('click',function(e){
+      e.preventDefault();
+      $('.collapse').not($(this).parent()).removeClass('active')
+      $(this).parent().toggleClass('active');
+    });
+    /*
+    $('h2').on('click', function(e){
+      e.preventDefault()
+    });*/
+  </script> 
+</body>
+</html>
