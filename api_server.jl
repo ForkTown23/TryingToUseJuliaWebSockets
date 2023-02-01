@@ -290,7 +290,39 @@ end
 
 # remove course normally
 function rem_cou_norm(req::HTTP.Request)
-    HTTP.Response(200, "Simple Dummy Response - You want to remove a course normally")
+    #println("showing req")
+    #@show req
+    #println("showing req.method")
+    #@show req.method
+    #println("showing header content type")
+    #@show HTTP.header(req, "Content-Type")
+    #println("showing the parsed content")
+    #bod = HTTP.parse_multipart_form(req)
+    #println("showing a string version of the parsing")
+
+    # the straight up string version seems to work fine. This is a very ugly method, though.
+    bod = String(req.body)
+    println("full bod")
+    println(bod)
+    dirty_params = split(bod, "-----------------------------")
+    println("first dirty param")
+    println(dirty_params[1])
+    println("second dirty param")
+    println(dirty_params[2])
+    println("third dirty param")
+    println(dirty_params[3])
+
+    csv = split(dirty_params[2], "\n")[5:end-3]
+    open("newfile.csv", "w") do file
+        for row in csv
+            write(file, row)
+            write(file, "\n")
+        end
+    end
+    curr = read_csv("./newfile.csv")
+    println("curriculum!")
+    println(curr)
+    HTTP.Response(200, "Simple Dummy Response - You want to remove a course normally, here is the longest path $(longest_paths(curr.curriculum))")
 end
 
 # remove prereq normally
