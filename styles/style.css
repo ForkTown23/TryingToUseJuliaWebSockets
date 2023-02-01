@@ -11,7 +11,7 @@ input {
     margin: 4px 0;
 }
 @import url(https://fonts.googleapis.com/css?family=Roboto);
-html{ height:100%}
+html{ background-color: black;}
 body{
 font-family: 'Roboto', sans-serif;
 font-size:15px;
@@ -21,6 +21,7 @@ font-size:15px;
   -ms-user-select: none;
   user-select: none; 
 align-items: stretch;
+overflow:visible;
 }
 h1{
 color:rgb(18, 169, 154);
@@ -55,7 +56,7 @@ z-index: 200;
 color:#444;
 max-height:3000px;
 padding:10px 20px;
-margin: 10px -10px;
+margin: 0px -10px;
 transition: all 0.2s,max-height 4.8s;
 }
 .collapse h2 {
