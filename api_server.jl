@@ -149,10 +149,10 @@ institutional_response_second_half = "</div>
 </body>
 </html>"
 
-
-# this format is based off of the examples in the HTTP.jl Github respond
+#------------------------------------------------------------------------------------
+# this format is based off of the examples in the HTTP.jl Github repo
 const ROUTER = HTTP.Router()
-
+#------------------------------------------------------------------------------------
 # print affected plans web helper font
 function print_affected_plans_web(affected_plans)
     prev_major = "PL99"
@@ -192,8 +192,9 @@ function print_affected_plans_web(affected_plans)
     end
     return (ret, count, html_block)
 end
+#------------------------------------------------------------------------------------
 # parameter sanitizer functions
-# TODO
+# TODO the normal ones
 function sanitize_add_course_institutional(param_string::Vector{SubString{String}})
     # there are supposed to be 8 entries here
     if length(param_string) != 8
@@ -245,7 +246,6 @@ function sanitize_add_prereq_institutional(param_string::Vector{SubString{String
     return clean_params
 end
 
-
 function sanitize_remove_course_institutional(param_string::Vector{SubString{String}})
     # there is supposed to be one entry here
     if length(param_string) != 1
@@ -275,8 +275,9 @@ function sanitize_remove_prereq_institutional(param_string::Vector{SubString{Str
     end
     return clean_params
 end
-
+#------------------------------------------------------------------------------------------
 # functions for each of the things you can do
+# TODO add the normal functions
 # add course normally
 function add_cou_norm(req::HTTP.Request)
     HTTP.Response(200, "Simple Dummy Response - You want to add a course normally")
@@ -407,7 +408,7 @@ function rem_pre_inst(req::HTTP.Request)
     end
     #HTTP.Response(200, "Simple Dummy Response - You want to remove a prereq institutionally")
 end
-
+#------------------------------------------------------------------------------
 # Register the routes
 HTTP.register!(ROUTER, "POST", "/api/normal/add/course", add_cou_norm)
 HTTP.register!(ROUTER, "POST", "/api/normal/add/prereq", add_pre_norm)
@@ -417,8 +418,6 @@ HTTP.register!(ROUTER, "POST", "/api/institutional/add/course", add_cou_inst)
 HTTP.register!(ROUTER, "POST", "/api/institutional/add/prereq", add_pre_inst)
 HTTP.register!(ROUTER, "POST", "/api/institutional/remove/course", rem_cou_inst)
 HTTP.register!(ROUTER, "POST", "/api/institutional/remove/prereq", rem_pre_inst)
-
+#--------------------------------------------------------------------------------
 # Serve !
 server = HTTP.serve!(ROUTER, Sockets.localhost, 8080)
-
-#close(server)
