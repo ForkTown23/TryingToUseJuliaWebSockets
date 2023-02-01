@@ -194,6 +194,22 @@ function print_affected_plans_web(affected_plans)
 end
 # parameter sanitizer functions
 # TODO
+function sanitize_add_prereq_institutional(param_string::Vector{SubString{String}})
+    # there are supposed to be two entries here.
+    if length(param_string) != 2
+        throw(ArgumentError("There's a weird number of courses here, we just need two."))
+    end
+    # they are in the format: "Target-Name=COURSE+CODE&Prereq-Name=COURSE+CODE"
+    clean_params = Vector{String}()
+    for pair in param_string
+        course_w_code = split(pair, "=")[2]
+        course_w_code = replace(course_w_code, "+" => " ")
+        push!(clean_params, course_w_code)
+    end
+    return clean_params
+end
+
+
 function sanitize_remove_course_institutional(param_string::Vector{SubString{String}})
     # there is supposed to be one entry here
     if length(param_string) != 1
@@ -247,12 +263,45 @@ end
 
 # add course institutional
 function add_cou_inst(req::HTTP.Request)
-    HTTP.Response(200, "Simple Dummy Response - You want to add a course institutionally")
+    request_string = String(req.body)
+    request_strings = split(request_string, "&")
+    try
+        clean_params = ""
+        affected = ""
+        html_resp = ""
+    catch e
+        showerror(stdout, e)
+        display(stacktrace(catch_backtrace()))
+        return HTTP.Response(400, "Error: $e")
+    end
+    #HTTP.Response(200, "Simple Dummy Response - You want to add a course institutionally")
 end
 
 # add prereq institutional
 function add_pre_inst(req::HTTP.Request)
-    HTTP.Response(200, "Simple Dummy Response - You want to add a prereq institutionally")
+    request_string = String(req.body)
+    request_strings = split(request_string, "&")
+    try
+        clean_params = ""
+        affected = ""
+        html_resp = ""
+
+        # clean params
+        clean_params = sanitize_add_prereq_institutional(request_strings[2:end])
+        # add the prereq and analyze
+        affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
+        # clean the results for the web and compose the repsonse
+        (affected, count, html_resp) = print_affected_plans_web(affected)
+        affected = affected * "Number of plans affected $count"
+        resp = institutional_response_first_half * html_resp * institutional_response_second_half
+        println(resp)
+        return HTTP.Response("$resp")
+    catch e
+        showerror(stdout, e)
+        display(stacktrace(catch_backtrace()))
+        return HTTP.Response(400, "Error: $e")
+    end
+    #HTTP.Response(200, "Simple Dummy Response - You want to add a prereq institutionally")
 end
 
 # remove_course_institutional
