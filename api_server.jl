@@ -209,6 +209,21 @@ function sanitize_remove_course_institutional(param_string::Vector{SubString{Str
     return clean_params
 end
 
+function sanitize_remove_prereq_institutional(param_string::Vector{SubString{String}})
+    # there are supposed to be two entries here.
+    if length(param_string) != 2
+        throw(ArgumentError("There's a weird number of courses here, we just need two."))
+    end
+    # they are in the format: "Target-Name=COURSE+CODE&Prereq-Name=COURSE+CODE"
+    clean_params = Vector{String}()
+    for pair in param_string
+        course_w_code = split(pair, "=")[2]
+        course_w_code = replace(course_w_code, "+" => " ")
+        push!(clean_params, course_w_code)
+    end
+    return clean_params
+end
+
 # functions for each of the things you can do
 # add course normally
 function add_cou_norm(req::HTTP.Request)
@@ -251,7 +266,7 @@ function rem_cou_inst(req::HTTP.Request)
 
         # clean params
         clean_params = sanitize_remove_course_institutional(request_strings[2:end])
-        # delete the prereq and alayze
+        # delete the course and alayze
         affected = delete_course_institutional(clean_params[1], big_curric)
         # clean the results specifically for the webkit
         (affected, count, html_resp) = print_affected_plans_web(affected)
@@ -271,7 +286,30 @@ end
 
 # remove prereq institutional
 function rem_pre_inst(req::HTTP.Request)
-    HTTP.Response(200, "Simple Dummy Response - You want to remove a prereq institutionally")
+    request_string = String(req.body)
+    request_strings = split(request_string, "&")
+    try
+        clean_params = ""
+        affected = ""
+        html_resp = ""
+
+        # clean params
+        clean_params = sanitize_remove_prereq_institutional(request_strings[2:end])
+        # remove the prereq and analyze
+        affected = delete_prerequisite_institutional(clean_params[1], clean_params[2], big_curric)
+        # compose the response
+        (affected, count, html_resp) = print_affected_plans_web(affected)
+        affected = affected * "Number of plans affected: $count"
+        resp = institutional_response_first_half * html_resp * institutional_response_second_half
+        println(resp)
+        # respond
+        return HTTP.Response(200, "$resp")
+    catch e
+        showerror(stdout, e)
+        display(stacktrace(catch_backtrace()))
+        return HTTP.Response(400, "Error: $e")
+    end
+    #HTTP.Response(200, "Simple Dummy Response - You want to remove a prereq institutionally")
 end
 
 # Register the routes
