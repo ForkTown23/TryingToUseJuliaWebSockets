@@ -194,6 +194,42 @@ function print_affected_plans_web(affected_plans)
 end
 # parameter sanitizer functions
 # TODO
+function sanitize_add_course_institutional(param_string::Vector{SubString{String}})
+    # there are supposed to be 8 entries here
+    if length(param_string) != 8
+        throw(ArgumentError("There's a weird number of courses here, we need eight."))
+    end
+    # they are in the format: ["Target-Name=MATH+20B.5", "Target-Hours=5", "Target-Prereq1=MATH+20B", "Target-Prereq2=MATH+20A", "Target-Prereq3=MATH+4C", "Target-Dep1=MATH+108", "Target-Dep2=MATH+109", "Target-Dep3=MATH+20E"] 
+    clean_params = Vector{String}()
+    for pair in param_string
+        course_w_code = split(pair, "=")[2]
+        course_w_code = replace(course_w_code, "+" => " ")
+        push!(clean_params, course_w_code)
+    end
+    # there's a few extra things to do here
+    # 1) turn things into the dict format
+    # 2) remove the empty ones
+    # instead i'm just adding the non-empty ones
+    prereqs = Dict()
+    for prereq in clean_params[3:5]
+        if prereq != ""
+            prereqs[prereq] = pre
+        end
+    end
+    deps = Dict()
+    for dep in clean_params[6:8]
+        if dep != ""
+            deps[dep] = pre
+        end
+    end
+    cleaner_params = []
+    push!(cleaner_params, clean_params[1])
+    push!(cleaner_params, parse(Float64, clean_params[2]))
+    push!(cleaner_params, prereqs)
+    push!(cleaner_params, deps)
+    return cleaner_params
+end
+
 function sanitize_add_prereq_institutional(param_string::Vector{SubString{String}})
     # there are supposed to be two entries here.
     if length(param_string) != 2
@@ -269,6 +305,17 @@ function add_cou_inst(req::HTTP.Request)
         clean_params = ""
         affected = ""
         html_resp = ""
+
+        # clean the parameters
+        clean_params = sanitize_add_course_institutional(request_strings[2:end])
+        # add the course and analyze
+        affected = add_course_institutional(clean_params[1], big_curric, clean_params[2], clean_params[3], clean_params[4])
+        # clean results and compose response
+        (affected, count, html_resp) = print_affected_plans_web(affected)
+        affected = affected * "Number of plans affected: $count"
+        resp = institutional_response_first_half * html_resp * institutional_response_second_half
+        println(resp)
+        return HTTP.Response(200, "$resp")
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
@@ -292,10 +339,10 @@ function add_pre_inst(req::HTTP.Request)
         affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
         # clean the results for the web and compose the repsonse
         (affected, count, html_resp) = print_affected_plans_web(affected)
-        affected = affected * "Number of plans affected $count"
+        affected = affected * "Number of plans affected: $count"
         resp = institutional_response_first_half * html_resp * institutional_response_second_half
         println(resp)
-        return HTTP.Response("$resp")
+        return HTTP.Response(200, "$resp")
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
