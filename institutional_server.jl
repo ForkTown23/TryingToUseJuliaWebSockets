@@ -270,7 +270,6 @@ function sanitize_remove_prereq(param_string::Vector{SubString{String}})
         push!(clean_params, course_w_code)
     end
     return clean_params
-    return clean_params
 end
 
 
