@@ -319,10 +319,11 @@ function rem_cou_norm(req::HTTP.Request)
             write(file, "\n")
         end
     end
+    # double check the type, could be degree plan, or nothing at all
     curr = read_csv("./newfile.csv")
     println("curriculum!")
     println(curr)
-    HTTP.Response(200, "Simple Dummy Response - You want to remove a course normally, here is the longest path $(longest_paths(curr.curriculum))")
+    HTTP.Response(200, "Simple Dummy Response - You want to remove a course normally, \nhere is the longest path $(longest_paths(curr.curriculum))")
 end
 
 # remove prereq normally
