@@ -3,6 +3,19 @@ using CSV, SimpleWebsockets, HTTP, CurricularAnalytics, CurricularAnalyticsDiff,
 # UCSD curriculum
 big_curric = read_csv("./files/condensed.csv");
 
+# read all the curricula
+curricula = Dict()
+for (root, dirs, files) in walkdir("./files/output/")
+    for dir in dirs
+        curricula[dir] = Dict()
+        for (sub_root, sub_dirs, sub_files) in walkdir(joinpath(root, dir))
+            for file in sub_files
+                curricula[dir][file] = read_csv(joinpath(sub_root, file))
+            end
+        end
+    end
+end
+
 # html stuff
 institutional_response_first_half = "<!DOCTYPE html>
 <html lang='en'>
