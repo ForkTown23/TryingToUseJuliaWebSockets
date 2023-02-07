@@ -278,3 +278,4 @@ curr = read_csv("./files/output/CS26/curriculum.csv");
 new_curr = add_course("MATH 20B.5", curr, 5.0, Dict(), Dict())
 new_curr = add_dyno_prereq("MATH 20B.5", "CHEM 6C", new_curr, df)
 new_curr = add_prereq("MATH 20C", "MATH 20B.5", new_curr, pre)
+
