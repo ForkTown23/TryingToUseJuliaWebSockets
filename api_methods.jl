@@ -1,4 +1,4 @@
-using CurricularAnalytics, CurricularAnalyticsDiff, DataFrames
+using CurricularAnalytics, CurricularAnalyticsDiff, DataFrames, CSV
 
 # This is for when prereqs are being added implicitly. We do the best job we can to accomodate
 function add_dyno_prereq(new_course::AbstractString, prereq::AbstractString, curr::Curriculum, prereq_chains::DataFrame)
@@ -10,23 +10,47 @@ function add_dyno_prereq(new_course::AbstractString, prereq::AbstractString, cur
     else
         # else:
         println(fil)
-        if fil[:"Prereq Sequence ID"][end] == missing
+        if typeof(fil[:"Prereq Sequence ID"][end]) == Missing
             # if the prereq is the beginning of the chain, just add it in with standard units and hook it up
             new_curr = add_course(prereq, curr, 4.0, Dict(), Dict(new_course => pre))
         else
+            new_curr = nothing
             # for each prereq sequence id:
             for i in range(1, fil[:"Prereq Sequence ID"][end])
+                (typeof(new_curr) == Nothing) ? new_curr = curr : new_curr = new_curr
                 # is one of the courses with that matching id in the curriculum?
+                ## dataframes are annoying as hell, just filter by the sequence id then get the names with that ID
                 prereq_cluster = filter(:"Prereq Sequence ID" => x -> x == i, fil)
+                # these are the prereqs of the prereq, ok?
                 prereq_names = []
                 for row in range(1, size(prereq_cluster)[1])
                     push!(prereq_names, strip(prereq_cluster[row, :"Prereq Subject Code"]) * " " * strip(prereq_cluster[row, "Prereq Course Number"]))
                 end
                 println(prereq_names)
-                # yes:
-                # add that course as a prereq
-                # no:
-                # add that course in recursively with this method
+
+                ## ok having the pure names loop through now
+                found = false
+                for c in prereq_names
+                    p = course_from_name(c, new_curr)
+                    if typeof(p) != Nothing
+                        # yes:
+                        # add th course into the curriculum as a prereq
+                        if typeof(course_from_name(prereq, new_curr)) == Nothing
+                            new_curr = add_course(prereq, new_curr, 4.0, Dict(), Dict())
+                        end
+                        new_curr = add_prereq(prereq, c, new_curr, pre)
+                        # this was the original, it was adding an extra math 20A
+                        # add_course(c, new_curr, 4.0, Dict(), Dict(prereq => pre))
+                        found = true
+                        break
+                    end
+                end
+                if !found
+                    # if not found add this prereq in
+                    new_curr = add_course(prereq, new_curr, 4.0, Dict(), Dict(new_course => pre))
+                    # then go and find that course's prereq recursively
+                    new_curr = add_dyno_prereq(prereq, prereq_names[1], new_curr, prereq_chains)
+                end
             end
         end
     end
@@ -36,6 +60,7 @@ end
 
 function add_course_inst_web(course_name::AbstractString, credit_hours::Real, prereqs::Dict, dependencies::Dict, curr::Curriculum, nominal_plans::Vector{String})
     try
+        df = DataFrame(CSV.File("./files/prereqs.csv"))
         results = Dict()
         # skip 0) the curric is passed in
         # get the list of affected plans
@@ -66,15 +91,15 @@ function add_course_inst_web(course_name::AbstractString, credit_hours::Real, pr
                 else
                     # add the prereq
                     println("issue with $preq in $major $college -  add it in from the curriculum")
-
-                    # TODO
+                    new_curr = add_dyno_prereq(course_name, preq, new_curr, df)
                 end
             end
             # hook up the dependencies if they exist
             for (dep, type) in dependencies
-                if dep in courses_to_course_names(curr.courses)
+                if dep in courses_to_course_names(new_curr.courses)
                     # hook up the dep
-                    add_requisite!(course_from_name(course_name, new_curr), course_from_name(dep, new_curr), pre)
+                    new_curr = add_prereq(dep, course_name, new_curr, pre)
+                    #add_requisite!(course_from_name(course_name, new_curr), course_from_name(dep, new_curr), pre)
                 end # else do nothing
             end
             ## don't run diff, just check the total credit hours and complexity scores 
@@ -99,6 +124,7 @@ end
 ## record complexity & unit score differences
 function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString)
     try
+        df = DataFrame(CSV.File("./files/prereqs.csv"))
         results = Dict()
         # 0) read the condensed
         condensed = read_csv("./files/condensed2.csv")
@@ -127,7 +153,7 @@ function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString
                 new_curr = add_prereq(course_name, prereq, curr, pre)
             catch
                 # ok so try adding the requisite
-                # TODO
+                new_curr = add_dyno_prereq(course_name, prereq, curr, df)
             end
             ## don't run diff, just check the total credit hours and complexity scores 
             ch_diff = new_curr.credit_hours - curr.credit_hours
@@ -238,6 +264,17 @@ function remove_course_inst_web(course_name::AbstractString)
     end
 end
 
-#println("starting")
-#condensed = read_csv("./files/condensed2.csv")
-#results = add_course_inst_web("MATH 20B.5", 5.0, Dict("CHEM 6A" => pre), Dict("MATH 20C" => pre), condensed, ["BE25RE"])
+println("starting")
+condensed = read_csv("./files/condensed2.csv")
+#println("---------------add prereq-----------------")
+#results = add_prereq_inst_web("MATH 20B", "CHEM 6C")
+println("------------new course--------------")
+results = add_course_inst_web("MATH 20B.5", 5.0, Dict("CHEM 6C" => pre), Dict("MATH 20C" => pre), condensed, ["BE25RE"])
+
+# this works easy
+df = DataFrame(CSV.File("./files/prereqs.csv"))
+curr = read_csv("./files/output/CS26/curriculum.csv");
+
+new_curr = add_course("MATH 20B.5", curr, 5.0, Dict(), Dict())
+new_curr = add_dyno_prereq("MATH 20B.5", "CHEM 6C", new_curr, df)
+new_curr = add_prereq("MATH 20C", "MATH 20B.5", new_curr, pre)
