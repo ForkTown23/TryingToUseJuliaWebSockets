@@ -119,7 +119,7 @@ end
 # 3) for each plan:
 ## read the plan csv
 ## get curric object from it
-## remove the prereq
+## add the prereq (sometimes recursively)
 ## run diff (maybe not)
 ## record complexity & unit score differences
 function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString)
@@ -148,6 +148,7 @@ function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString
             ## this is harder than the initial version
             ## have to go through each prereq of the prereq you want to add
             ## and add that to the new curriculum 
+            new_curr = curr
             try
                 # sometimes it'll be super easy
                 new_curr = add_prereq(course_name, prereq, curr, pre)
@@ -163,6 +164,7 @@ function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString
             results[major][college]["complexity"] = complex_diff
             results[major][college]["unit change"] = ch_diff
         end
+        return results
     catch e
         throw(e)
     end
@@ -264,10 +266,13 @@ function remove_course_inst_web(course_name::AbstractString)
     end
 end
 
+
 println("starting")
-condensed = read_csv("./files/condensed2.csv")
+#=
+condensed = read_csv("./files/condensed2.csv")=#
 #println("---------------add prereq-----------------")
 #results = add_prereq_inst_web("MATH 20B", "CHEM 6C")
+#=
 println("------------new course--------------")
 results = add_course_inst_web("MATH 20B.5", 5.0, Dict("CHEM 6C" => pre), Dict("MATH 20C" => pre), condensed, ["BE25RE"])
 
@@ -278,4 +283,7 @@ curr = read_csv("./files/output/CS26/curriculum.csv");
 new_curr = add_course("MATH 20B.5", curr, 5.0, Dict(), Dict())
 new_curr = add_dyno_prereq("MATH 20B.5", "CHEM 6C", new_curr, df)
 new_curr = add_prereq("MATH 20C", "MATH 20B.5", new_curr, pre)
+=#
+
+#results = remove_course_inst_web("MATH 20C")
 
