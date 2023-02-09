@@ -8,25 +8,6 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>What If</h1>
-    <p class="helper-text">Here we can explore the impacts of what if questions on individual curricula</p>
-    <div class="collapse">
-      <div class="collapse-header">
-        <h2>Remove a Course</h2>
-      </div>
-      <p>To remove a course, specify the curriculum you want to affect and then the name of the course you wish to remove.</p>
-      <form action="http://localhost:8080/api/normal/remove/course" method="POST" enctype="multipart/form-data">
-        <p class="form-row">
-          <label for="normal-course-remove-curric">Select a file:</label>
-          <input class="input-text" type="file" id="normal-course-remove-curric" name="file" accept=".csv">
-        </p>
-        <p class="form-row">
-          <label for="normal-course-remove">Select the course to remove</label>
-          <input class="input-text" type="text" id="normal-course-remove" name="Course-Name">
-        </p>
-         <input type="submit" value="Send">
-      </form>
-    </div>
     <h1>Institutional What If</h1>
     <p class="helper-text">Here we explore the impacts of what if questions on an institution. That is, how many majors/plans do changes in the prerequisite structure affect?</p>
     <div class="collapse">
