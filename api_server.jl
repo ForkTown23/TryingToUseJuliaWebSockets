@@ -257,7 +257,7 @@ function html_table(results::Dict{Any,Any})
         for plan in header_count
             for content_type in sub_header_count
                 cell = cell_start
-                stuff = results[major][plan][content_type]
+                #stuff = results[major][plan][content_type]
                 try
                     cell = cell * string(round(results[major][plan][content_type]; digits = 1))
                 catch e
@@ -285,7 +285,7 @@ end
 
 #----------
 # Testing
-#html_table(results)
+#html_table(add_prereq_inst_web("CHEM 6C", "MATH 20C"))
 
 #------------------------------------------------------------------------------------
 # parameter sanitizer functions
@@ -437,6 +437,14 @@ function add_cou_inst(req::HTTP.Request)
 
         # clean the parameters
         clean_params = sanitize_add_course_institutional(request_strings[2:end])
+        println("clean params")
+        println(clean_params)
+
+        condensed = read_csv("./files/condensed2.csv")
+        results = add_course_inst_web(clean_params[1], clean_params[2], clean_params[3], clean_params[4], condensed, [""])
+        html_results = institutional_response_first_half * html_table(results) * institutional_response_second_half
+        return HTTP.Response(200, "$html_results")
+        #=
         # add the course and analyze
         affected = add_course_institutional(clean_params[1], big_curric, clean_params[2], clean_params[3], clean_params[4])
         # clean results and compose response
@@ -444,7 +452,7 @@ function add_cou_inst(req::HTTP.Request)
         affected = affected * "Number of plans affected: $count"
         resp = institutional_response_first_half * html_resp * institutional_response_second_half
         println(resp)
-        return HTTP.Response(200, "$resp")
+        return HTTP.Response(200, "$resp")=#
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
@@ -466,6 +474,10 @@ function add_pre_inst(req::HTTP.Request)
         clean_params = sanitize_add_prereq_institutional(request_strings[2:end])
         println("clean params")
         println(clean_params)
+
+        results = add_prereq_inst_web(clean_params[1], clean_params[2])
+        html_results = institutional_response_first_half * html_table(results) * institutional_response_second_half
+        return HTTP.Response(200, "$html_results")
         #=
         # add the prereq and analyze
         affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
@@ -475,7 +487,7 @@ function add_pre_inst(req::HTTP.Request)
         resp = institutional_response_first_half * html_resp * institutional_response_second_half
         println(resp)
         return HTTP.Response(200, "$resp")=#
-        
+
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
@@ -531,7 +543,14 @@ function rem_pre_inst(req::HTTP.Request)
         affected = ""
         html_resp = ""
 
-        # clean params
+        clean_params = sanitize_remove_prereq_institutional(request_strings[2:end])
+        println("clean params")
+        println(clean_params)
+
+        results = remove_prereq_inst_web(clean_params[1], clean_params[2])
+        html_results = institutional_response_first_half * html_table(results) * institutional_response_second_half
+        return HTTP.Response(200, "$html_results")
+        #=# clean params
         clean_params = sanitize_remove_prereq_institutional(request_strings[2:end])
         # remove the prereq and analyze
         affected = delete_prerequisite_institutional(clean_params[1], clean_params[2], big_curric)
@@ -541,7 +560,7 @@ function rem_pre_inst(req::HTTP.Request)
         resp = institutional_response_first_half * html_resp * institutional_response_second_half
         println(resp)
         # respond
-        return HTTP.Response(200, "$resp")
+        return HTTP.Response(200, "$resp")=#
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
