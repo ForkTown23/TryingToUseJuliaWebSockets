@@ -1,20 +1,8 @@
 using CSV, SimpleWebsockets, HTTP, CurricularAnalytics, CurricularAnalyticsDiff, JSON, Sockets
+include("./api_methods.jl")
 
 # UCSD curriculum
 big_curric = read_csv("./files/condensed.csv");
-
-# read all the curricula
-curricula = Dict()
-for (root, dirs, files) in walkdir("./files/output/")
-    for dir in dirs
-        curricula[dir] = Dict()
-        for (sub_root, sub_dirs, sub_files) in walkdir(joinpath(root, dir))
-            for file in sub_files
-                curricula[dir][file] = read_csv(joinpath(sub_root, file))
-            end
-        end
-    end
-end
 
 # html stuff
 institutional_response_first_half = "<!DOCTYPE html>
@@ -40,6 +28,7 @@ html{ background-color:black}
 body{
 font-family: 'Roboto', sans-serif;
 font-size:15px;
+color: #fff;
 -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
@@ -138,6 +127,10 @@ content: ' + ';
     margin:1em;
     display:table-cell;
     }
+    table, th, td{
+        border: 1px solid;
+        border-collapse: collapse;
+    }
     </style>
             <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js'></script>
         </head>
@@ -205,6 +198,95 @@ function print_affected_plans_web(affected_plans)
     end
     return (ret, count, html_block)
 end
+
+
+#----------------------------------------------------------------------------------
+# fill out the table based on results
+function html_table(results::Dict{Any,Any})
+    # basic htm components
+    table_start = "<table>"
+    row_start = "<tr>"
+    row_end = "</tr>"
+    header_start = "<th colspan='2'>"
+    header_end = "</th>"
+    sub_header_start = "<th>"
+    sub_header_end = "</th>"
+    cell_start = "<td>"
+    cell_end = "</td>"
+    table_end = "</table>"
+    html = table_start * row_start * sub_header_start * "Major Code" * sub_header_end
+
+    # first find out how many headers we need
+    header_count = Set()
+    sub_header_count = Set()
+    for key in keys(results)
+        plan_keys = keys(results[key])
+        header_count = union!(header_count, plan_keys)
+        for plan in plan_keys
+            sub_header_count = union!(sub_header_count, keys(results[key][plan]))
+        end
+    end
+    # make them vectors for consistent iteration through them
+    header_count = sort(collect(header_count))
+    sub_header_count = sort(collect(sub_header_count))
+    println(length(header_count))
+    println(length(sub_header_count))
+    header_start = "<th colspan='$(length(sub_header_count))'>"
+    # assemble the header
+    for header in header_count
+        html = html * header_start * header * header_end
+    end
+    html = html * row_end 
+    html = html * row_start
+    # assemble the sub_header
+    html = html * sub_header_start * sub_header_end
+    for header in header_count
+        for sub_header in sub_header_count
+            html = html * sub_header_start * sub_header * sub_header_end
+        end
+    end
+    html = html * row_end
+
+    # put in the actual data
+    for major in sort(collect(keys(results)))
+        row = row_start
+        # first put in the major code
+        row = row * cell_start * major * cell_end
+        # then for each college fill out the data
+        cell = ""
+        for plan in header_count
+            for content_type in sub_header_count
+                cell = cell_start
+                stuff = results[major][plan][content_type]
+                try
+                    cell = cell * string(round(results[major][plan][content_type]; digits = 1))
+                catch e
+                    showerror(stdout, e)
+                    display(stacktrace(catch_backtrace()))
+                    cell = cell * "-" 
+                end
+                cell = cell * cell_end
+                row = row * cell
+            end
+            
+        end
+        row = row * row_end
+        html = html * row
+    end     
+
+    # then populate the results
+    println(keys(results))
+
+    # end the table
+    html = html * table_end
+    return html
+
+end
+
+#----------
+# Testing
+#html_table(results)
+
 #------------------------------------------------------------------------------------
 # parameter sanitizer functions
 # TODO the normal ones
@@ -382,6 +464,9 @@ function add_pre_inst(req::HTTP.Request)
 
         # clean params
         clean_params = sanitize_add_prereq_institutional(request_strings[2:end])
+        println("clean params")
+        println(clean_params)
+        #=
         # add the prereq and analyze
         affected = add_prereq_institutional(big_curric, clean_params[1], clean_params[2])
         # clean the results for the web and compose the repsonse
@@ -389,7 +474,8 @@ function add_pre_inst(req::HTTP.Request)
         affected = affected * "Number of plans affected: $count"
         resp = institutional_response_first_half * html_resp * institutional_response_second_half
         println(resp)
-        return HTTP.Response(200, "$resp")
+        return HTTP.Response(200, "$resp")=#
+        
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
@@ -406,9 +492,18 @@ function rem_cou_inst(req::HTTP.Request)
         clean_params = ""
         affected = ""
         html_resp = ""
-
+        println("request strings")
+        println(request_strings)
         # clean params
         clean_params = sanitize_remove_course_institutional(request_strings[2:end])
+        println("clean params")
+        println(clean_params)
+
+        results = remove_course_inst_web(clean_params[1])
+        html_results = institutional_response_first_half * html_table(results) * institutional_response_second_half
+        return HTTP.Response(200, "$html_results")
+        # delete and analyze
+        #=
         # delete the course and alayze
         affected = delete_course_institutional(clean_params[1], big_curric)
         # clean the results specifically for the webkit
@@ -418,7 +513,7 @@ function rem_cou_inst(req::HTTP.Request)
         resp = institutional_response_first_half * html_resp * institutional_response_second_half
         println(resp)
         # respond
-        return HTTP.Response(200, "$resp") #="$response, \n $clean_params \n $affected"=#
+        return HTTP.Response(200, "$resp") #="$response, \n $clean_params \n $affected"=#=#
     catch e
         showerror(stdout, e)
         display(stacktrace(catch_backtrace()))
@@ -467,3 +562,5 @@ HTTP.register!(ROUTER, "POST", "/api/institutional/remove/prereq", rem_pre_inst)
 #--------------------------------------------------------------------------------
 # Serve !
 server = HTTP.serve!(ROUTER, Sockets.localhost, 8080)
+
+
