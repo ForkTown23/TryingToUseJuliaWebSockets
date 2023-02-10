@@ -108,6 +108,7 @@ function add_course_inst_web(course_name::AbstractString, credit_hours::Real, pr
             # write the results in 
             results[major][college] = Dict()
             results[major][college]["complexity"] = complex_diff
+            results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
         end
         return results
@@ -162,6 +163,7 @@ function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString
             # write the results in 
             results[major][college] = Dict()
             results[major][college]["complexity"] = complex_diff
+            results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
         end
         return results
@@ -208,6 +210,7 @@ function remove_prereq_inst_web(target_name::AbstractString, prereq_name::Abstra
             # write the results in 
             results[major][college] = Dict()
             results[major][college]["complexity"] = complex_diff
+            results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
         end
         return results
@@ -257,7 +260,9 @@ function remove_course_inst_web(course_name::AbstractString)
             # write the results in 
             results[major][college] = Dict()
             results[major][college]["complexity"] = complex_diff
+            results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
+
         end
         return results
     catch e
