@@ -257,12 +257,14 @@ function remove_course_inst_web(course_name::AbstractString)
             ## don't run diff, just check the total credit hours and complexity scores 
             ch_diff = new_curr.credit_hours - curr.credit_hours
             complex_diff = complexity(new_curr)[1] - complexity(curr)[1] # consider using complexity(curr)
+            path_change = length(longest_paths(new_curr)[1]) - length(longest_paths(curr)[1])
             # write the results in 
             results[major][college] = Dict()
             results[major][college]["complexity"] = complex_diff
             results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
-
+            results[major][college]["longest path change"] = path_change
+            results[major][college]["longest path %"] = path_change / length(longest_paths(curr)[1]) * 100
         end
         return results
     catch e
