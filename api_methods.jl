@@ -112,7 +112,7 @@ function add_course_inst_web(course_name::AbstractString, credit_hours::Real, pr
             results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
             results[major][college]["longest path change"] = path_change
-            results[major][college]["longest path %"] = path_change / length(longest_paths(curr)[1]) * 100
+            results[major][college]["longest path change %"] = path_change / length(longest_paths(curr)[1]) * 100
         end
         return results
     catch
@@ -170,7 +170,7 @@ function add_prereq_inst_web(course_name::AbstractString, prereq::AbstractString
             results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
             results[major][college]["longest path change"] = path_change
-            results[major][college]["longest path %"] = path_change / length(longest_paths(curr)[1]) * 100
+            results[major][college]["longest path change %"] = path_change / length(longest_paths(curr)[1]) * 100
         end
         return results
     catch e
@@ -220,7 +220,7 @@ function remove_prereq_inst_web(target_name::AbstractString, prereq_name::Abstra
             results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
             results[major][college]["longest path change"] = path_change
-            results[major][college]["longest path %"] = path_change / length(longest_paths(curr)[1]) * 100
+            results[major][college]["longest path change %"] = path_change / length(longest_paths(curr)[1]) * 100
         end
         return results
     catch e
@@ -273,7 +273,7 @@ function remove_course_inst_web(course_name::AbstractString)
             results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
             results[major][college]["longest path change"] = path_change
-            results[major][college]["longest path %"] = path_change / length(longest_paths(curr)[1]) * 100
+            results[major][college]["longest path change %"] = path_change / length(longest_paths(curr)[1]) * 100
         end
         return results
     catch e

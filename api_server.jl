@@ -151,7 +151,63 @@ institutional_response_second_half = "</div>
 \$('h2').on('click', function(e){
   e.preventDefault()
 });*/
-</script> 
+</script>
+<script>
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById('results');
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = 'asc';
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+      // Start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /* Loop through all table rows (except the
+      first and second, which contains table headers): */
+      for (i = 2; i < (rows.length - 1); i++) {
+        // Start by saying there should be no switching:
+        shouldSwitch = false;
+        /* Get the two elements you want to compare,
+        one from current row and one from the next: */
+        x = rows[i].getElementsByTagName('TD')[n];
+        y = rows[i + 1].getElementsByTagName('TD')[n];
+        /* Check if the two rows should switch place,
+        based on the direction, asc or desc: */
+        if (dir == 'asc') {
+          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == 'desc') {
+          if (Number(x.innerHTML) < Number(y.innerHTML)) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+      if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        // Each time a switch is done, increase this count by 1:
+        switchcount ++;
+      } else {
+        /* If no switching has been done AND the direction is 'asc',
+        set the direction to 'desc' and run the while loop again. */
+        if (switchcount == 0 && dir == 'asc') {
+          dir = 'desc';
+          switching = true;
+        }
+      }
+    }
+  }
+</script>
 </body>
 </html>"
 
@@ -204,7 +260,7 @@ end
 # fill out the table based on results
 function html_table(results::Dict{Any,Any})
     # basic htm components
-    table_start = "<table>"
+    table_start = "<table id='results'>"
     row_start = "<tr>"
     row_end = "</tr>"
     header_start = "<th colspan='2'>"
@@ -214,7 +270,7 @@ function html_table(results::Dict{Any,Any})
     cell_start = "<td>"
     cell_end = "</td>"
     table_end = "</table>"
-    html = table_start * row_start * sub_header_start * "Major Code" * sub_header_end
+    html = table_start * row_start * "<th rowspan='2'>" * "Major Code" * sub_header_end
 
     # first find out how many headers we need
     header_count = Set()
@@ -239,11 +295,14 @@ function html_table(results::Dict{Any,Any})
     html = html * row_end 
     html = html * row_start
     # assemble the sub_header
-    html = html * sub_header_start * sub_header_end
+    #html = html * sub_header_start * sub_header_end
+    count = 1
     for header in header_count
         for sub_header in sub_header_count
-            html = html * sub_header_start * sub_header * sub_header_end
+            html = html * "<td onclick='sortTable($count)'>" * sub_header * sub_header_end
+            count = count + 1
         end
+
     end
     html = html * row_end
 
