@@ -4,15 +4,18 @@ using CurricularAnalytics, CurricularAnalyticsDiff, DataFrames, CSV
 function add_dyno_prereq(new_course::AbstractString, prereq::AbstractString, curr::Curriculum, prereq_chains::DataFrame)
     # look at the dataframe to find prereq
     fil = filter(:"Course ID" => x -> strip(x) == replace(prereq, " " => ""), prereq_chains)
-    if size(fil)[1] == 0
+    if size(fil)[1] == 0 || prereq == "MATH 20A"
         # if there's no match then just add a course with that name and empty characteristics
         new_curr = add_course(prereq, curr, 4.0, Dict(), Dict(new_course => pre))
     else
         # else:
         println(fil)
+        #stripped_names = [strip(i) for i in fil[:"Prereq Course ID"]]
         if typeof(fil[:"Prereq Sequence ID"][end]) == Missing
             # if the prereq is the beginning of the chain, just add it in with standard units and hook it up
             new_curr = add_course(prereq, curr, 4.0, Dict(), Dict(new_course => pre))
+            #elseif "MATH20A" in stripped_names
+            #    new_curr = add_course("MATH 20A", curr, 4.0, Dict(), Dict(new_course => pre))
         else
             new_curr = nothing
             # for each prereq sequence id:
@@ -49,7 +52,11 @@ function add_dyno_prereq(new_course::AbstractString, prereq::AbstractString, cur
                     # if not found add this prereq in
                     new_curr = add_course(prereq, new_curr, 4.0, Dict(), Dict(new_course => pre))
                     # then go and find that course's prereq recursively
-                    new_curr = add_dyno_prereq(prereq, prereq_names[1], new_curr, prereq_chains)
+                    if "MATH 20A" in prereq_names
+                        new_curr = add_course("MATH 20A", new_curr, 4.0, Dict(), Dict(prereq => pre))
+                    else
+                        new_curr = add_dyno_prereq(prereq, prereq_names[1], new_curr, prereq_chains)
+                    end
                 end
             end
         end
@@ -105,17 +112,21 @@ function add_course_inst_web(course_name::AbstractString, credit_hours::Real, pr
             ## don't run diff, just check the total credit hours and complexity scores 
             ch_diff = new_curr.credit_hours - curr.credit_hours
             complex_diff = complexity(new_curr)[1] - complexity(curr)[1] # consider using complexity(curr)
-            path_change = length(longest_paths(new_curr)[1]) - length(longest_paths(curr)[1])
+            new_curr_longest_path = length(longest_paths(new_curr)) > 0 ? length(longest_paths(new_curr)[1]) : 0
+            old_curr_longest_path = length(longest_paths(curr)) > 0 ? length(longest_paths(curr)[1]) : 0
+            path_change = new_curr_longest_path - old_curr_longest_path
             # write the results in 
             results[major][college] = Dict()
             results[major][college]["complexity"] = complex_diff
             results[major][college]["complexity %"] = (complex_diff / complexity(curr)[1]) * 100
             results[major][college]["unit change"] = ch_diff
             results[major][college]["longest path change"] = path_change
-            results[major][college]["longest path change %"] = path_change / length(longest_paths(curr)[1]) * 100
+            results[major][college]["longest path change %"] = old_curr_longest_path == 0 ? 100 : path_change / old_curr_longest_path * 100
         end
         return results
-    catch
+    catch e
+        showerror(stdout, e)
+        display(stacktrace(catch_backtrace()))
     end
 end
 # 1) find course in condensed and the prereq (ignore this one)
