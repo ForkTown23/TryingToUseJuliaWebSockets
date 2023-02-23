@@ -351,16 +351,44 @@ end
 # TODO the normal ones
 function sanitize_add_course_institutional(param_string::Vector{SubString{String}})
     # there are supposed to be 8 entries here
-    if length(param_string) != 8
-        throw(ArgumentError("There's a weird number of courses here, we need eight."))
+    println("cleaning: parameter string")
+    println(param_string)
+    if length(param_string) < 8
+        throw(ArgumentError("There's a weird number of paramters here, we need at least eight."))
     end
     # they are in the format: ["Target-Name=MATH+20B.5", "Target-Hours=5", "Target-Prereq1=MATH+20B", "Target-Prereq2=MATH+20A", "Target-Prereq3=MATH+4C", "Target-Dep1=MATH+108", "Target-Dep2=MATH+109", "Target-Dep3=MATH+20E"] 
     clean_params = Vector{String}()
-    for pair in param_string
-        course_w_code = split(pair, "=")[2]
-        course_w_code = replace(course_w_code, "+" => " ")
-        push!(clean_params, course_w_code)
+    
+    for pair in param_string[1:8]
+        splitt = split(pair, "=")
+        course_w_code = splitt[2]
+        if splitt[1] != "Major"
+            course_w_code = replace(course_w_code, "+" => " ")
+            push!(clean_params, course_w_code)
+        else
+            push!(major_codes, splitt[2])
+        end
     end
+    major_codes = Vector{String}()
+    plan_codes = Vector{String}()
+    for pair in param_string[9:end]
+        splitt = split(pair, "=")
+        course_w_code = splitt[2]
+        if splitt[1] == "Major"
+            push!(major_codes, splitt[2])
+        end
+        if splitt[1] == "FI" || splitt[1] == "MU" || splitt[1] == "RE" || splitt[1] == "SI" || splitt[1] == "SN" || splitt[1] == "TH" || splitt[1] == "WA"
+            for major in major_codes
+                push!(plan_codes, major * splitt[1])
+            end
+        end
+    end
+    for major in major_codes
+        push!(plan_codes, major * "curriculum")
+    end
+    sort!(plan_codes)
+    println("plan codes")
+    println(plan_codes)
     # there's a few extra things to do here
     # 1) turn things into the dict format
     # 2) remove the empty ones
@@ -382,6 +410,7 @@ function sanitize_add_course_institutional(param_string::Vector{SubString{String
     push!(cleaner_params, parse(Float64, clean_params[2]))
     push!(cleaner_params, prereqs)
     push!(cleaner_params, deps)
+    isempty(plan_codes) ? push!(cleaner_params, [""]) : push!(cleaner_params, plan_codes)
     return cleaner_params
 end
 
@@ -500,7 +529,7 @@ function add_cou_inst(req::HTTP.Request)
         println(clean_params)
 
         condensed = read_csv("./files/condensed2.csv")
-        results = add_course_inst_web(clean_params[1], clean_params[2], clean_params[3], clean_params[4], condensed, [""])
+        results = add_course_inst_web(clean_params[1], clean_params[2], clean_params[3], clean_params[4], condensed, clean_params[5])
         html_results = institutional_response_first_half * html_table(results) * institutional_response_second_half
         return HTTP.Response(200, "$html_results")
         #=
