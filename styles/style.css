@@ -106,8 +106,8 @@ display:table;
 .form-row{
 display:table-row;
 }
-label{
-display:table-cell;
+.table-input{
+  display:table-cell;
 }
 .input-text{
 margin:1em;
