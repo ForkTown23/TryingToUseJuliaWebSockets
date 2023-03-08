@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>WhatIf</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Institutional What If</h1>
+    <p class="helper-text">Here we explore the impacts of what if questions on an institution. That is, how many majors/plans do changes in the prerequisite structure affect?</p>
+    <div class="collapse">
+      <div class="collapse-header">
+        <h2>Add a Course</h2>
+      </div>
+      <p>To add a course, please specify the new name and the credit hours. </p>
+      <p>Strictly speaking adding prereqs and dependencies is not required, but courses that have no dependencies will not affect any plans other than the ones that they are manually added to.</p>
+      <p>For dependency and prerequisite course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/add/course" method="POST">
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-course-new-course-name">Type in the new course name: </label>
+          <input type="hidden" id="institutional-add-course" name="Method" value="add-course">
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-name" required="required" name="Target-Name">
+        </p>
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-course-new-course-hours">Type in the new course credit hours: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-hours" required="required" name="Target-Hours">
+        </p>
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-course-new-course-prereq1">Type in the new course prereq #1: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq1" name="Target-Prereq1">
+        </p>
+        <p class="form-row">
+          <label class="table-input" ="my-institutional-add-course-new-course-prereq2">Type in the new course prereq #2: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq2" placeholder="(Optional)" name="Target-Prereq2">
+        </p>
+        <p class="form-row">
+        <label class="table-input" for="my-institutional-add-course-new-course-prereq3">Type in the new course prereq #3: </label>
+        <input class="input-text" type="text" id="my-institutional-add-course-new-course-prereq3" placeholder="(Optional)" name="Target-Prereq3">
+        </p>
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-course-new-course-dep1">Type in the new course dependency #1: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep1" name="Target-Dep1">
+        </p>
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-course-new-course-dep2">Type in the new course dependency #2: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep2" placeholder="(Optional)" name="Target-Dep2">
+        </p>
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-course-new-course-dep3">Type in the new course dependency #3: </label>
+          <input class="input-text" type="text" id="my-institutional-add-course-new-course-dep3" placeholder="(Optional)" name="Target-Dep3">
+        </p>
+        <p class="form-row">
+          <label for="major-selector">Select the majors this class will be in</label>
+          <select name="Major" multiple>
+            <option value="AA25">AA25</option>
+            <option value="AN26">AN26</option>
+            <option value="AN27">AN27</option>
+            <option value="AN28">AN28</option>
+            <option value="AN29">AN29</option>
+            <option value="AN30">AN30</option>
+            <option value="BE25">BE25</option>
+            <option value="BE27">BE27</option>
+            <option value="BE28">BE28</option>
+            <option value="BE29">BE29</option>
+            <option value="BI30">BI30</option>
+            <option value="BI31">BI31</option>
+            <option value="BI32">BI32</option>
+            <option value="BI34">BI34</option>
+            <option value="BI35">BI35</option>
+            <option value="BI37">BI37</option>
+            <option value="BI38">BI38</option>
+            <option value="CE25">CE25</option>
+            <option value="CG25">CG25</option>
+            <option value="CG29">CG29</option>
+            <option value="CG31">CG31</option>
+            <option value="CG32">CG32</option>
+            <option value="CG33">CG33</option>
+            <option value="CG34">CG34</option>
+            <option value="CG35">CG35</option>
+            <option value="CH25">CH25</option>
+            <option value="CH34">CH34</option>
+            <option value="CH35">CH35</option>
+            <option value="CH36">CH36</option>
+            <option value="CH38">CH38</option>
+            <option value="CL25">CL25</option>
+            <option value="CM26">CM26</option>
+            <option value="CN25">CN25</option>
+            <option value="CR25">CR25</option>
+            <option value="CS25">CS25</option>
+            <option value="CS26">CS26</option>
+            <option value="CS27">CS27</option>
+            <option value="DS25">DS25</option>
+            <option value="EC26">EC26</option>
+            <option value="EC27">EC27</option>
+            <option value="EC28">EC28</option>
+            <option value="EC37">EC37</option>
+            <option value="ED25">ED25</option>
+            <option value="EN25">EN25</option>
+            <option value="EN28">EN28</option>
+            <option value="EN30">EN30</option>
+            <option value="ES25">ES25</option>
+            <option value="ES26">ES26</option>
+            <option value="ES27">ES27</option>
+            <option value="ES28">ES28</option>
+            <option value="ET25">ET25</option>
+            <option value="GH25">GH25</option>
+            <option value="GH26">GH26</option>
+            <option value="GL25">GL25</option>
+            <option value="GS25">GS25</option>
+            <option value="HI25">HI25</option>
+            <option value="HS25">HS25</option>
+            <option value="HS26">HS26</option>
+            <option value="HS27">HS27</option>
+            <option value="HS28">HS28</option>
+            <option value="IS25">IS25</option>
+            <option value="IS26">IS26</option>
+            <option value="IS27">IS27</option>
+            <option value="IS28">IS28</option>
+            <option value="IS29">IS29</option>
+            <option value="IS30">IS30</option>
+            <option value="IS31">IS31</option>
+            <option value="IS34">IS34</option>
+            <option value="IS36">IS36</option>
+            <option value="IT25">IT25</option>
+            <option value="JA25">JA25</option>
+            <option value="JS25">JS25</option>
+            <option value="LA25">LA25</option>
+            <option value="LA26">LA26</option>
+            <option value="LA27">LA27</option>
+            <option value="LN25">LN25</option>
+            <option value="LN29">LN29</option>
+            <option value="LN32">LN32</option>
+            <option value="LN33">LN33</option>
+            <option value="LN34">LN34</option>
+            <option value="LT33">LT33</option>
+            <option value="LT34">LT34</option>
+            <option value="LT36">LT36</option>
+            <option value="LT41">LT41</option>
+            <option value="MA27">MA27</option>
+            <option value="MA29">MA29</option>
+            <option value="MA30">MA30</option>
+            <option value="MA31">MA31</option>
+            <option value="MA32">MA32</option>
+            <option value="MA33">MA33</option>
+            <option value="MA35">MA35</option>
+            <option value="MC25">MC25</option>
+            <option value="MC27">MC27</option>
+            <option value="MC30">MC30</option>
+            <option value="MC31">MC31</option>
+            <option value="MC32">MC32</option>
+            <option value="MC33">MC33</option>
+            <option value="MC34">MC34</option>
+            <option value="MU25">MU25</option>
+            <option value="MU26">MU26</option>
+            <option value="MU27">MU27</option>
+            <option value="NA25">NA25</option>
+            <option value="PB25">PB25</option>
+            <option value="PB26">PB26</option>
+            <option value="PB27">PB27</option>
+            <option value="PB28">PB28</option>
+            <option value="PB29">PB29</option>
+            <option value="PB30">PB30</option>
+            <option value="PB31">PB31</option>
+            <option value="PC25">PC25</option>
+            <option value="PC26">PC26</option>
+            <option value="PC28">PC28</option>
+            <option value="PC29">PC29</option>
+            <option value="PC30">PC30</option>
+            <option value="PC31">PC31</option>
+            <option value="PC32">PC32</option>
+            <option value="PC33">PC33</option>
+            <option value="PC34">PC34</option>
+            <option value="PC35">PC35</option>
+            <option value="PL25">PL25</option>
+            <option value="PS25">PS25</option>
+            <option value="PS26">PS26</option>
+            <option value="PS27">PS27</option>
+            <option value="PS28">PS28</option>
+            <option value="PS29">PS29</option>
+            <option value="PS30">PS30</option>
+            <option value="PS31">PS31</option>
+            <option value="PS32">PS32</option>
+            <option value="PS34">PS34</option>
+            <option value="PY26">PY26</option>
+            <option value="PY28">PY28</option>
+            <option value="PY29">PY29</option>
+            <option value="PY30">PY30</option>
+            <option value="PY31">PY31</option>
+            <option value="PY32">PY32</option>
+            <option value="PY33">PY33</option>
+            <option value="PY34">PY34</option>
+            <option value="RE26">RE26</option>
+            <option value="RU26">RU26</option>
+            <option value="SE27">SE27</option>
+            <option value="SI29">SI29</option>
+            <option value="SI30">SI30</option>
+            <option value="SI31">SI31</option>
+            <option value="SO25">SO25</option>
+            <option value="SO27">SO27</option>
+            <option value="SO28">SO28</option>
+            <option value="SO29">SO29</option>
+            <option value="SO30">SO30</option>
+            <option value="SO31">SO31</option>
+            <option value="SO32">SO32</option>
+            <option value="SO33">SO33</option>
+            <option value="TH26">TH26</option>
+            <option value="TH27">TH27</option>
+
+            <!--These are the undecided. These are weird-->
+            <option value="UN27">UN27</option>
+            <option value="UNHA">UNHA</option>
+            <option value="UNPS">UNPS</option>
+            <option value="UNSS">UNSS</option>
+
+            <option value="US26">US26</option>
+            <option value="US27">US27</option>
+            <option value="VA26">VA26</option>
+            <option value="VA27">VA27</option>
+            <option value="VA28">VA28</option>
+            <option value="VA29">VA29</option>
+            <option value="VA30">VA30</option>
+          </select>
+        </p>
+        <p>Select the plans this class will be in</p>
+        <input type="checkbox" id="FI" name="FI" value="FI">
+        <label for="FI">ERC</label>
+            
+        <input type="checkbox" id="MU" name="MU" value="MU">
+        <label for="MU">Muir</label>
+        
+        
+        <input type="checkbox" id="RE" name="RE" value="RE">
+        <label for="RE">Revelle</label>
+        
+        
+        <input type="checkbox" id="SI" name="SI" value="SI">
+        <label for="SI">Sixth</label>
+              
+        <input type="checkbox" id="SN" name="SN" value="SN">
+        <label for="SN">Seventh</label>
+        
+        <input type="checkbox" id="TH" name="TH" value="TH">
+        <label for="TH">Thurgood Marshall</label>
+        <input type="checkbox" id="SI" name="SI" value="SI">
+        <label for="SI">Sixth</label>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div class="collapse">
+      <div class="collapse-header">
+       <h2>Add a Prerequisite</h2>
+      </div>
+      <p>Here you can add a prerequisite. Please fill in the course you want to add a prerequisite to and the course you want to add as the prerequisite</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/add/prereq" method="POST">
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-prereq-target">Type in a course to get a new prerequisite: </label>
+          <input type="hidden" id="institutional-add-prereq" name="Method" value="add-prereq">
+          <input class="input-text" type="text" id="my-institutional-add-prereq-target" required="required" name="Target-Name">
+        </p>
+        <p class="form-row">
+          <label class="table-input" for="my-institutional-add-prereq-prereq">Type in the name of the new prerequisite: </label>
+          <input class="input-text" type="text" id="my-institutional-add-prereq-prereq" required="required" name="Prereq-Name">
+        </p>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div class="collapse">
+      <div class="collapse-header">
+        <h2>Remove a course</h2>
+      </div>
+      <p>Here you can remove a course. Please simply specify the name of the course to remove</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/remove/course" method="POST">
+        <p class="form-row">
+        <label class="table-input" for="my-institutional-remove-course">Type the course to remove: </label>
+        <input type="hidden" id="institutional-remove-course" name="Method" value="remove-course">
+        <input class="input-text" type="text" id="my-institutional-remove-course" required="required" name="Target-Name">
+        </p>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div class="collapse">
+      <div class="collapse-header">
+        <h2>Remove a prerequisite</h2>
+      </div>
+      <p>Here you can remove a prerequisite. Please specify the course that will lose a prerequisite and the prerequisite it will lose.</p>
+      <p>For course names, please make sure the name matches perfectly. If you're looking for "MATH 20C" please type that out, not "MATH20C" or "MATH  20C"</p>
+      <form action="http://localhost:8080/api/institutional/remove/prereq" method="POST">
+        <p class="form-row">
+        <label class="table-input" for="my-institutional-remove-prereq-target">Select the course to lose a prereq: </label>
+        <input type="hidden" id="institutitonal-remove-prereq" name="Method" value="remove-prereq">
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-target" required="required" name="Target-Name">
+        </p>
+        <p class="form-row">
+        <label class="table-input" for="my-institutional-remove-prereq-prereq">Select which prereq to remove: </label>
+        <input class="input-text" type="text" id="my-institutional-remove-prereq-prereq" required="required" name="Prereq-Name">
+        </p>
+        <input type="submit" value="Send">
+    </div>
+  </div> 
+
+  <script>
+    // Script the makes sure only one option is open at a time.
+    // mostly for flavor :)
+    $('.collapse-header').on('click',function(e){
+      e.preventDefault();
+      $('.collapse').not($(this).parent()).removeClass('active')
+      $(this).parent().toggleClass('active');
+    });
+    /*
+    $('h2').on('click', function(e){
+      e.preventDefault()
+    });*/
+  </script> 
+</body>
+</html>
